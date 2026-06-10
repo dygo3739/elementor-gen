@@ -222,6 +222,20 @@
     .btn-generate:hover:not(:disabled) { background: var(--app-blue-h); }
     .btn-generate:active:not(:disabled) { transform: scale(0.99); }
     .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-build-direct {
+      font-family: var(--font); font-size: 12px; font-weight: 600;
+      color: var(--app-blue); background: var(--app-blue-light);
+      border: 1px solid rgba(99,102,241,0.25); border-radius: var(--radius);
+      padding: 9px 14px; cursor: pointer; width: 100%;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: background 0.15s;
+    }
+    .btn-build-direct:hover:not(:disabled) { background: rgba(99,102,241,0.15); }
+    .btn-build-direct:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-hint {
+      font-size: 10px; color: var(--text-muted); line-height: 1.5;
+      text-align: center; padding: 0 4px;
+    }
     .spinner {
       width: 14px; height: 14px;
       border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
@@ -614,6 +628,13 @@
         </svg>
         <span id="btn-label">Plan & Build</span>
       </button>
+      <button class="btn-build-direct" id="btn-build-direct" onclick="buildDirect()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Build directly from spec
+      </button>
+      <div class="btn-hint">Use "Plan & Build" for short briefs · "Build directly" when your brief already has full content &amp; layout details</div>
 
     </div>
 
@@ -2093,6 +2114,11 @@ function showStage(stage) {
    WIREFRAME PROMPT
 ══════════════════════════════════════════ */
 function buildWireframePrompt(brief, audience, tone, mode, project) {
+  // Truncate very long briefs for wireframe — detailed specs should use buildDirect()
+  const briefForWF = brief.length > 800
+    ? brief.slice(0, 800) + '\n[Brief truncated — using Plan & Build for structure only]'
+    : brief;
+  brief = briefForWF;
   return `You are a senior UX designer planning an Elementor Pro page layout.
 
 Your job is to output a structured wireframe plan as JSON — NOT Elementor JSON, just a planning document.
@@ -2285,7 +2311,7 @@ async function generate() {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 3000,
+        max_tokens: 2000,
         messages: [{ role: 'user', content: wfPrompt }],
       }),
     });
@@ -2299,8 +2325,14 @@ async function generate() {
     const raw  = data.content?.[0]?.text || '';
 
     // Parse wireframe JSON — robust extraction
+    console.log('=== RAW WIREFRAME RESPONSE ===');
+    console.log(raw);
+    console.log('=== END RAW ===');
     currentWireframe = extractWireframeJSON(raw);
-    if (!currentWireframe) throw new Error('Could not parse wireframe plan. Claude may have returned malformed JSON.');
+    if (!currentWireframe) {
+      console.error('Failed to parse. Raw length:', raw.length, 'First 500 chars:', raw.slice(0, 500));
+      throw new Error('Could not parse wireframe plan. Check the browser console (F12) to see what Claude returned.');
+    }
 
     renderWireframe(currentWireframe);
     setStatus('green', 'Review wireframe');
@@ -2621,9 +2653,140 @@ function wrapForElementor(jsonStr, title) {
 ══════════════════════════════════════════ */
 function setLoading(on, label = 'Planning…') {
   document.getElementById('btn-generate').disabled = on;
+  document.getElementById('btn-build-direct').disabled = on;
   document.getElementById('spinner').style.display  = on ? 'block' : 'none';
   document.getElementById('btn-icon').style.display = on ? 'none' : 'block';
   document.getElementById('btn-label').textContent  = on ? label : 'Plan & Build';
+}
+
+/* ── Build directly from spec (skip wireframe) ── */
+async function buildDirect() {
+  const apiKey  = document.getElementById('api-key').value.trim();
+  const brief   = document.getElementById('brief').value.trim();
+  const audience= document.getElementById('audience').value.trim();
+  const tone    = document.getElementById('tone').value;
+  const project = getActiveProject();
+
+  if (!apiKey)  { toast('Add your Anthropic API key first.', 'error'); return; }
+  if (!brief)   { toast('Write a brief or paste your spec first.', 'error'); return; }
+  if (!project) { toast('Select a project first.', 'error'); return; }
+
+  currentBrief   = brief;
+  currentAudience= audience;
+  currentTone    = tone;
+
+  setLoading(true, 'Building JSON…');
+  setStatus('blue', 'Building…');
+
+  const name = brief.length > 44 ? brief.slice(0, 44) + '…' : brief;
+  document.getElementById('output-name').textContent = name;
+  const tag = document.getElementById('output-tag');
+  tag.style.display = 'inline-block';
+  tag.textContent = currentMode === 'page' ? 'Full Page' : 'Section';
+  tag.className = 'output-tag ' + (currentMode === 'page' ? 'tag-page' : 'tag-section');
+
+  showStage('json');
+  document.getElementById('code-output').value = '';
+
+  const t0 = Date.now();
+  const systemPrompt = buildSystemPrompt(project);
+  const userPrompt = [
+    `OUTPUT TYPE: ${currentMode === 'page' ? 'FULL PAGE (multiple sections in one array)' : 'SINGLE SECTION (one section in array)'}`,
+    `BRIEF / SPEC:`,
+    brief,
+    audience ? `TARGET AUDIENCE: ${audience}` : '',
+    `TONE: ${tone}`,
+    ``,
+    `Follow the spec above exactly — sections, layout, copy, and order.`,
+    `Output ONLY raw JSON starting with "[". No markdown, no explanation.`,
+  ].filter(Boolean).join('\n');
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 16000,
+        stream: true,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `HTTP ${res.status}`);
+    }
+
+    const area    = document.getElementById('code-output');
+    const reader  = res.body.getReader();
+    const decoder = new TextDecoder();
+    let raw = '', stopReason = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      for (const line of chunk.split('\n')) {
+        if (!line.startsWith('data: ')) continue;
+        const payload = line.slice(6).trim();
+        if (payload === '[DONE]') break;
+        try {
+          const evt = JSON.parse(payload);
+          if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
+            raw += evt.delta.text;
+            area.value = raw;
+            area.scrollTop = area.scrollHeight;
+          }
+          if (evt.type === 'message_delta' && evt.delta?.stop_reason) {
+            stopReason = evt.delta.stop_reason;
+          }
+        } catch {}
+      }
+    }
+
+    const jsonText = extractJSON(raw);
+    if (!jsonText) throw new Error('Claude returned non-JSON. Try again.');
+
+    let finalJSON = jsonText, wasRepaired = false;
+    try {
+      JSON.parse(finalJSON);
+    } catch {
+      const repaired = smartRepairJSON(finalJSON);
+      try {
+        JSON.parse(repaired);
+        finalJSON = repaired;
+        wasRepaired = true;
+      } catch (e2) {
+        area.value = jsonText;
+        throw new Error(stopReason === 'max_tokens'
+          ? 'Hit the token limit — your spec is very long. Try splitting into separate section generations.'
+          : `Malformed JSON — try again. (${e2.message})`);
+      }
+    }
+
+    currentJSON = finalJSON;
+    const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+    showStage('json');
+    setStatus('green', wasRepaired ? 'Done (auto-repaired)' : 'Done');
+    showStats(currentJSON, elapsed);
+    addHistory(currentBrief, currentMode, project.name);
+    toast(wasRepaired ? 'Built & auto-repaired ✓' : 'Elementor JSON ready!', 'success');
+
+  } catch (err) {
+    showStage('empty');
+    setStatus('red', 'Error');
+    toast(err.message || 'Build failed.', 'error');
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
 }
 
 function setStatus(color, text) {
