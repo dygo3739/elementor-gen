@@ -1080,6 +1080,8 @@ async function generate() {
 
   setLoading(true);
   setStatus('blue', `Generating for ${project.name}…`);
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('code-output').value = '';
   const t0 = Date.now();
 
   const systemPrompt = buildSystemPrompt(project);
@@ -1103,6 +1105,7 @@ async function generate() {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 16000,
+        stream: true,
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }],
       }),
@@ -1113,34 +1116,67 @@ async function generate() {
       throw new Error(err?.error?.message || `HTTP ${res.status}`);
     }
 
-    const data = await res.json();
-    const raw  = data.content?.[0]?.text || '';
-    const jsonText = extractJSON(raw);
-    if (!jsonText) throw new Error('Claude returned non-JSON content. Try regenerating.');
+    // Stream the response and show it live in the textarea
+    const area = document.getElementById('code-output');
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let raw = '';
+    let stopReason = '';
 
-    let parsed;
-    try {
-      parsed = JSON.parse(jsonText);
-      currentJSON = jsonText;
-    } catch {
-      const repaired = repairJSON(jsonText);
-      try {
-        parsed = JSON.parse(repaired);
-        currentJSON = repaired;
-        console.warn('JSON auto-repaired.');
-      } catch (e2) {
-        document.getElementById('code-output').value = jsonText;
-        document.getElementById('empty-state').style.display = 'none';
-        throw new Error(`Malformed JSON — try regenerating or switch to Section mode. (${e2.message})`);
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      for (const line of chunk.split('\n')) {
+        if (!line.startsWith('data: ')) continue;
+        const payload = line.slice(6).trim();
+        if (payload === '[DONE]') break;
+        try {
+          const evt = JSON.parse(payload);
+          if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
+            raw += evt.delta.text;
+            area.value = raw;
+            area.scrollTop = area.scrollHeight;
+          }
+          if (evt.type === 'message_delta' && evt.delta?.stop_reason) {
+            stopReason = evt.delta.stop_reason;
+          }
+        } catch {}
       }
     }
 
+    const jsonText = extractJSON(raw);
+    if (!jsonText) throw new Error('Claude returned non-JSON content. Try regenerating.');
+
+    let finalJSON = jsonText;
+    let wasRepaired = false;
+
+    try {
+      JSON.parse(finalJSON);
+    } catch {
+      const repaired = smartRepairJSON(finalJSON);
+      try {
+        JSON.parse(repaired);
+        finalJSON = repaired;
+        wasRepaired = true;
+        console.warn('JSON truncated and auto-repaired. Stop reason:', stopReason);
+      } catch (e2) {
+        area.value = jsonText;
+        throw new Error(
+          stopReason === 'max_tokens'
+            ? 'Output hit the token limit. Use "Section" mode instead of "Full Page", or shorten your brief.'
+            : `Malformed JSON — try regenerating. (${e2.message})`
+        );
+      }
+    }
+
+    currentJSON = finalJSON;
     displayOutput(currentJSON, brief, currentMode);
     const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
-    setStatus('green', 'Done');
+    setStatus('green', wasRepaired ? 'Done (auto-repaired)' : 'Done');
     showStats(currentJSON, elapsed);
     addHistory(brief, currentMode, project.name);
-    toast('Template generated!', 'success');
+    toast(wasRepaired ? 'Generated & auto-repaired ✓' : 'Template generated!', 'success');
 
   } catch (err) {
     setStatus('red', 'Error');
@@ -1159,15 +1195,48 @@ function extractJSON(raw) {
   return raw.slice(start, end + 1);
 }
 
-function repairJSON(str) {
+function smartRepairJSON(str) {
+  // Step 1: Remove trailing commas before } or ]
   str = str.replace(/,\s*([}\]])/g, '$1');
-  const ob = (str.match(/{/g)  || []).length;
-  const cb = (str.match(/}/g)  || []).length;
-  const oa = (str.match(/\[/g) || []).length;
-  const ca = (str.match(/\]/g) || []).length;
-  for (let i = 0; i < ob - cb; i++) str += '}';
-  for (let i = 0; i < oa - ca; i++) str += ']';
-  return str;
+
+  // Step 2: Find the last position where a complete top-level section object ends.
+  // Walk backwards to find the last clean '}, ' or '}' before a '[' or end,
+  // then close the root array there cleanly.
+  // Strategy: try progressively shorter truncations until JSON.parse succeeds.
+  // Find last '}' and try closing array after it.
+  let attempt = str;
+
+  // Trim to last complete object: scan backwards from end for '}'
+  // then append missing closers
+  const lastBrace = str.lastIndexOf('}');
+  if (lastBrace !== -1) {
+    attempt = str.slice(0, lastBrace + 1);
+    // Remove any trailing comma after the last brace
+    attempt = attempt.replace(/,\s*$/, '');
+    // Count and close any open braces/brackets BEFORE the last brace
+    const ob = (attempt.match(/{/g)  || []).length;
+    const cb = (attempt.match(/}/g)  || []).length;
+    const oa = (attempt.match(/\[/g) || []).length;
+    const ca = (attempt.match(/\]/g) || []).length;
+    for (let i = 0; i < ob - cb; i++) attempt += '}';
+    for (let i = 0; i < oa - ca; i++) attempt += ']';
+  }
+
+  // If still broken, try walking back element by element:
+  // find the second-to-last top-level '},' and close there
+  if (!isValidJSON(attempt)) {
+    const matches = [...str.matchAll(/},\s*\n\s*{/g)];
+    if (matches.length > 0) {
+      const lastClean = matches[matches.length - 1].index + 1;
+      attempt = str.slice(0, lastClean) + ']';
+    }
+  }
+
+  return attempt;
+}
+
+function isValidJSON(s) {
+  try { JSON.parse(s); return true; } catch { return false; }
 }
 
 /* ══════════════════════════════════════════
