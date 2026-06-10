@@ -275,12 +275,6 @@
     .btn-tool:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .output-body { flex: 1; overflow: auto; position: relative; }
-    #code-output {
-      font-family: 'SF Mono','Fira Code','Cascadia Code',monospace;
-      font-size: 12px; line-height: 1.65; color: #1e293b;
-      background: var(--white); padding: 24px 28px;
-      white-space: pre; min-height: 100%; outline: none; border: none; width: 100%; resize: none;
-    }
     .empty-state {
       position: absolute; inset: 0;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -381,6 +375,127 @@
     .btn-modal.save { background: var(--app-blue); border: 1px solid var(--app-blue); color: white; }
     .btn-modal.save:hover { background: var(--app-blue-h); }
     .modal-divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+    /* ── Wireframe styles ── */
+    .stage-badge {
+      font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+      background: #fef3c7; color: #92400e; letter-spacing: 0.3px;
+    }
+    .stage-badge.building { background: #ede9fe; color: #5b21b6; }
+    .stage-badge.done     { background: #d1fae5; color: #065f46; }
+
+    /* Wireframe section cards */
+    .wf-section {
+      border: 1px solid var(--border); border-radius: 10px;
+      margin-bottom: 16px; overflow: hidden; background: var(--white);
+    }
+    .wf-section-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px; background: var(--ghost-bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .wf-section-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--app-blue); color: white;
+      font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .wf-section-name {
+      font-size: 13px; font-weight: 700; color: var(--text-dark); flex: 1;
+    }
+    .wf-section-layout {
+      font-size: 10px; font-weight: 600; color: var(--text-muted);
+      background: var(--border); border-radius: 4px; padding: 2px 7px;
+    }
+    .wf-section-body { padding: 14px 16px; }
+
+    /* Wireframe columns */
+    .wf-cols { display: flex; gap: 10px; }
+    .wf-col {
+      flex: 1; display: flex; flex-direction: column; gap: 8px;
+      background: var(--ghost-bg); border: 1px dashed var(--border);
+      border-radius: 6px; padding: 10px;
+    }
+    .wf-col-label {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 4px;
+    }
+
+    /* Wireframe widget blocks */
+    .wf-widget {
+      border-radius: 5px; padding: 7px 10px;
+      font-size: 11px; line-height: 1.45;
+    }
+    .wf-widget-type {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; opacity: 0.6; margin-bottom: 2px;
+    }
+    .wf-widget-content { color: var(--text-dark); font-weight: 500; }
+    .wf-widget-sub { color: var(--text-muted); font-size: 10px; margin-top: 2px; }
+
+    /* Widget type colors */
+    .wf-w-heading   { background: #eff6ff; border: 1px solid #bfdbfe; }
+    .wf-w-text      { background: #f8fafc; border: 1px solid var(--border); }
+    .wf-w-button    { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .wf-w-image     { background: #faf5ff; border: 1px solid #e9d5ff; }
+    .wf-w-iconbox   { background: #fff7ed; border: 1px solid #fed7aa; }
+    .wf-w-list      { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .wf-w-testimonial{ background: #fdf4ff; border: 1px solid #f0abfc; }
+    .wf-w-counter   { background: #eff6ff; border: 1px solid #bfdbfe; }
+    .wf-w-spacer    { background: #f8fafc; border: 1px dashed var(--border); opacity: 0.5; }
+    .wf-w-divider   { background: #f8fafc; border: 1px dashed var(--border); opacity: 0.5; }
+    .wf-w-accordion { background: #fefce8; border: 1px solid #fde68a; }
+    .wf-w-video     { background: #fdf4ff; border: 1px solid #f0abfc; }
+    .wf-w-form      { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .wf-w-other     { background: #f8fafc; border: 1px solid var(--border); }
+
+    /* Section bg color chip */
+    .wf-bg-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; color: var(--text-muted);
+    }
+    .wf-bg-swatch {
+      width: 12px; height: 12px; border-radius: 3px;
+      border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0;
+    }
+
+    /* Revision bar */
+    .revision-bar {
+      display: flex; gap: 8px; align-items: center;
+      padding: 12px 16px; background: var(--white);
+      border-top: 1px solid var(--border); flex-shrink: 0;
+    }
+    .revision-bar input {
+      flex: 1; font-family: var(--font); font-size: 13px;
+      color: var(--text-dark); background: var(--ghost-bg);
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 8px 12px; outline: none;
+    }
+    .revision-bar input:focus { border-color: var(--app-blue); background: var(--white); }
+    .btn-revision-send {
+      width: 34px; height: 34px; border-radius: 6px;
+      background: var(--app-blue); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.15s;
+    }
+    .btn-revision-send:hover { background: var(--app-blue-h); }
+
+    /* Wireframe header summary */
+    .wf-header {
+      padding: 16px 28px 8px; border-bottom: 1px solid var(--border);
+      background: var(--white); flex-shrink: 0;
+    }
+    .wf-header-title { font-size: 13px; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; }
+    .wf-header-sub { font-size: 11px; color: var(--text-muted); }
+
+    #code-output {
+      font-family: 'SF Mono','Fira Code','Cascadia Code',monospace;
+      font-size: 12px; line-height: 1.65; color: #1e293b;
+      background: var(--white); padding: 24px 28px;
+      white-space: pre; width: 100%; min-height: 100%;
+      outline: none; border: none; resize: none;
+      display: block;
+    }
 
     /* Toast */
     #toast {
@@ -497,7 +612,7 @@
         <svg id="btn-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
           <path d="M7 1L9 5.5H13.5L10 8.5L11.5 13L7 10.5L2.5 13L4 8.5L0.5 5.5H5L7 1Z" fill="white"/>
         </svg>
-        <span id="btn-label">Generate Elementor JSON</span>
+        <span id="btn-label">Plan & Build</span>
       </button>
 
     </div>
@@ -514,29 +629,46 @@
 
   <!-- OUTPUT PANEL -->
   <section class="output-panel">
+
+    <!-- Toolbar: changes based on current stage -->
     <div class="output-toolbar">
       <div class="output-meta">
         <span class="output-name" id="output-name">—</span>
         <span class="output-tag" id="output-tag" style="display:none"></span>
+        <span class="stage-badge" id="stage-badge" style="display:none"></span>
       </div>
-      <div class="toolbar-actions">
-        <button class="btn-tool" id="btn-copy" onclick="copyJSON()" disabled>
+      <div class="toolbar-actions" id="toolbar-wireframe-actions" style="display:none">
+        <button class="btn-tool" id="btn-revise" onclick="reviseWireframe()">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 5.5a4.5 4.5 0 108-2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M9 1v2.5H6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Revise
+        </button>
+        <button class="btn-tool primary" id="btn-approve" onclick="approveWireframe()">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 5.5L4 8.5L9.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Approve & Build
+        </button>
+      </div>
+      <div class="toolbar-actions" id="toolbar-json-actions" style="display:none">
+        <button class="btn-tool" id="btn-back-to-wireframe" onclick="backToWireframe()">
+          ← Wireframe
+        </button>
+        <button class="btn-tool" id="btn-copy" onclick="copyJSON()">
           <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M7.5 3.5V2.2A.7.7 0 006.8 1.5H2.2A.7.7 0 001.5 2.2v4.6A.7.7 0 002.2 7.5H3.5" stroke="currentColor" stroke-width="1.1"/></svg>
           Copy
         </button>
-        <button class="btn-tool" id="btn-validate" onclick="validateJSON()" disabled>
+        <button class="btn-tool" id="btn-validate" onclick="validateJSON()">
           <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 5.5L4 8.5L9.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Validate
         </button>
-        <button class="btn-tool primary" id="btn-download" onclick="downloadJSON()" disabled>
+        <button class="btn-tool primary" id="btn-download" onclick="downloadJSON()">
           <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v6M3 5L5.5 8 8 5M1.5 9.5h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Download .json
         </button>
       </div>
     </div>
 
-    <div class="output-body">
-      <div class="empty-state" id="empty-state">
+    <!-- Stage 0: Empty -->
+    <div class="output-body" id="view-empty">
+      <div class="empty-state">
         <div class="empty-icon">
           <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
             <rect x="2" y="2" width="9" height="9" rx="2" fill="#6366f1" opacity="0.7"/>
@@ -545,9 +677,25 @@
             <rect x="15" y="15" width="9" height="9" rx="2" fill="#6366f1" opacity="0.8"/>
           </svg>
         </div>
-        <div class="empty-title">Your Elementor JSON appears here</div>
-        <div class="empty-sub">Pick a project, write a brief, hit Generate.<br>Then import the .json directly into Elementor Pro.</div>
+        <div class="empty-title">Describe what you want to build</div>
+        <div class="empty-sub">ElementorDrops will plan a wireframe first, then build the Elementor JSON after you approve.</div>
       </div>
+    </div>
+
+    <!-- Stage 1: Wireframe -->
+    <div class="output-body" id="view-wireframe" style="display:none; flex-direction:column; overflow-y:auto;">
+      <div id="wireframe-container" style="padding: 24px 28px; flex:1;"></div>
+      <!-- Revision input bar -->
+      <div class="revision-bar" id="revision-bar" style="display:none">
+        <input type="text" id="revision-input" placeholder="Describe what to change… e.g. add a pricing table, make the hero 2-column" />
+        <button class="btn-revision-send" onclick="submitRevision()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M7 1l6 6-6 6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stage 2: JSON output -->
+    <div class="output-body" id="view-json" style="display:none; overflow:auto;">
       <textarea id="code-output" readonly spellcheck="false"></textarea>
     </div>
 
@@ -1266,11 +1414,23 @@ function buildSystemPrompt(project) {
     `    "padding": { "unit": "px", "top": "0", "right": "30", "bottom": "0", "left": "30", "isLinked": false },`,
     `    "background_background": "classic",`,
     `    "background_color": "",`,
-    `    "vertical_alignment": "top",`,
-    `    "flex_align_items": "flex-start"`,
+    `    "flex_align_items": "flex-start",`,
+    `    "_border_border": "",`,
+    `    "_border_width": { "unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": true },`,
+    `    "_border_color": "",`,
+    `    "_border_radius": { "unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": true }`,
     `  },`,
     `  "elements": []`,
     `}`,
+    ``,
+    `To make an inner container a CARD, set:`,
+    `  "background_color": "#FFFFFF"`,
+    `  "_border_border": "solid"`,
+    `  "_border_width": { "top":"1","right":"1","bottom":"1","left":"1","unit":"px","isLinked":true }`,
+    `  "_border_color": "rgba(0,0,0,0.07)"`,
+    `  "_border_radius": { "top":"${r}","right":"${r}","bottom":"${r}","left":"${r}","unit":"px","isLinked":true }`,
+    `  "padding": { "top":"28","right":"28","bottom":"28","left":"28","unit":"px","isLinked":true }`,
+    `To HIGHLIGHT a card (featured), set "background_color": "${c.primary}" and override all child text colors to "#FFFFFF".`,
     ``,
     `Width guide for inner containers:`,
     `  2 equal cols: each width 50%`,
@@ -1796,6 +1956,81 @@ function buildSystemPrompt(project) {
     `  → inner 60%: nested-accordion widget`,
     ``,
     `════════════════════════════════`,
+    `NATIVE STYLING RULES — CRITICAL`,
+    `════════════════════════════════`,
+    ``,
+    `## NEVER use inline HTML styles for visual design`,
+    `The text-editor "editor" field is for TEXT CONTENT ONLY.`,
+    `BANNED patterns in "editor" strings:`,
+    `  ✗ <div style="background:#...; border:...; border-radius:...; padding:...">`,
+    `  ✗ <div style="..."> used as a card, box, or container`,
+    `  ✗ Comparison tables built from HTML inside a text-editor`,
+    `  ✗ Badges/pills built as <div style="background:...;border-radius:...">`,
+    `  ✗ Any layout achieved through HTML inside editor strings`,
+    ``,
+    `## ALWAYS use container and widget settings for styling`,
+    ``,
+    `CARDS — use a container with these settings:`,
+    `  "background_background": "classic"`,
+    `  "background_color": "#FFFFFF"`,
+    `  "_border_border": "solid"`,
+    `  "_border_width": { "unit":"px","top":"1","right":"1","bottom":"1","left":"1","isLinked":true }`,
+    `  "_border_color": "rgba(0,0,0,0.07)"`,
+    `  "_border_radius": { "unit":"px","top":"${r}","right":"${r}","bottom":"${r}","left":"${r}","isLinked":true }`,
+    `  "padding": { "unit":"px","top":"28","right":"28","bottom":"28","left":"28","isLinked":true }`,
+    `Then put heading + text-editor + button WIDGETS inside that container.`,
+    ``,
+    `HIGHLIGHTED CARD (featured/active state) — override on the container:`,
+    `  "background_color": "${c.primary}"  (or ${c.dark} for navy)`,
+    `  "_border_color": "${c.primary}"`,
+    `Then override widget text colors to "#FFFFFF" inside that container.`,
+    ``,
+    `SECTION BACKGROUNDS — set on the outer container:`,
+    `  "background_background": "classic"`,
+    `  "background_color": "#F3F6FB"  (or any brand color)`,
+    ``,
+    `BADGES / EYEBROW LABELS — the ONE acceptable use of inline style in editor:`,
+    `  Only for color and font-size on a <p> or <span> tag. No layout div.`,
+    `  ✓ "<p style=\"text-transform:uppercase;letter-spacing:2px;font-size:13px;font-weight:600;color:${c.primary}\">Label</p>"`,
+    `  ✗ "<div style=\"background:${c.accent};color:#fff;padding:6px 16px;border-radius:4px;\">Badge</div>"`,
+    ``,
+    `COMPARISON SECTIONS — build as native containers:`,
+    `  - 3 inner containers side by side (33% each)`,
+    `  - Each container styled with card settings above`,
+    `  - Featured container gets highlighted background`,
+    `  - Each row of data = heading widget (label) + text-editor widget (value)`,
+    `  - Use divider widgets between rows`,
+    ``,
+    `SPACING — use spacer widgets or container padding. Never use empty <p> or <br> tags for spacing.`,
+    ``,
+    `FULL NATIVE CARD EXAMPLE (pricing/comparison column):`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "container",`,
+    `  "isInner": true,`,
+    `  "settings": {`,
+    `    "flex_direction": "column",`,
+    `    "content_width": "full",`,
+    `    "width": { "unit": "%", "size": 33.33, "sizes": [] },`,
+    `    "padding": { "unit": "px", "top": "32", "right": "28", "bottom": "32", "left": "28", "isLinked": false },`,
+    `    "background_background": "classic",`,
+    `    "background_color": "#FFFFFF",`,
+    `    "_border_border": "solid",`,
+    `    "_border_width": { "unit": "px", "top": "1", "right": "1", "bottom": "1", "left": "1", "isLinked": true },`,
+    `    "_border_color": "rgba(0,0,0,0.07)",`,
+    `    "_border_radius": { "unit": "px", "top": "${r}", "right": "${r}", "bottom": "${r}", "left": "${r}", "isLinked": true },`,
+    `    "flex_align_items": "flex-start"`,
+    `  },`,
+    `  "elements": [`,
+    `    { heading widget: plan name, h3 },`,
+    `    { text-editor: price },`,
+    `    { divider widget },`,
+    `    { icon-list widget: feature rows },`,
+    `    { button widget }`,
+    `  ]`,
+    `}`,
+    ``,
+    `════════════════════════════════`,
     `CONTENT RULES`,
     `════════════════════════════════`,
     `- Write REAL specific copy for ${project.name}'s audience — NEVER Lorem Ipsum`,
@@ -1815,33 +2050,378 @@ function buildSystemPrompt(project) {
 /* ══════════════════════════════════════════
    GENERATE
 ══════════════════════════════════════════ */
-let currentMode = 'section';
-let currentJSON = '';
-let historyItems = [];
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+let currentMode     = 'section';
+let currentJSON     = '';
+let currentWireframe= null; // parsed wireframe object
+let currentBrief    = '';
+let currentAudience = '';
+let currentTone     = '';
+let historyItems    = [];
 
+// Stages: 'empty' | 'wireframe' | 'json'
+let appStage = 'empty';
+
+/* ══════════════════════════════════════════
+   STAGE MANAGEMENT
+══════════════════════════════════════════ */
+function showStage(stage) {
+  appStage = stage;
+  document.getElementById('view-empty').style.display     = stage === 'empty'     ? 'flex' : 'none';
+  document.getElementById('view-wireframe').style.display = stage === 'wireframe' ? 'flex' : 'none';
+  document.getElementById('view-json').style.display      = stage === 'json'      ? 'block': 'none';
+  document.getElementById('toolbar-wireframe-actions').style.display = stage === 'wireframe' ? 'flex' : 'none';
+  document.getElementById('toolbar-json-actions').style.display      = stage === 'json'      ? 'flex' : 'none';
+  document.getElementById('revision-bar').style.display  = stage === 'wireframe' ? 'flex' : 'none';
+
+  const badge = document.getElementById('stage-badge');
+  if (stage === 'empty') { badge.style.display = 'none'; }
+  else if (stage === 'wireframe') {
+    badge.style.display = 'inline-block';
+    badge.className = 'stage-badge';
+    badge.textContent = 'Wireframe';
+  } else {
+    badge.style.display = 'inline-block';
+    badge.className = 'stage-badge done';
+    badge.textContent = 'JSON Ready';
+  }
+}
+
+/* ══════════════════════════════════════════
+   WIREFRAME PROMPT
+══════════════════════════════════════════ */
+function buildWireframePrompt(brief, audience, tone, mode, project) {
+  return `You are a senior UX designer planning an Elementor Pro page layout.
+
+Your job is to output a structured wireframe plan as JSON — NOT Elementor JSON, just a planning document.
+
+OUTPUT: A single JSON object (not an array). Schema:
+{
+  "title": "short descriptive name",
+  "summary": "1-2 sentence summary of what this builds and why",
+  "sections": [
+    {
+      "name": "Section Name",
+      "layout": "1-col | 2-col-50/50 | 2-col-60/40 | 2-col-40/60 | 3-col | 4-col",
+      "background": "#hexcolor or 'white' or 'light' or 'dark' or 'primary'",
+      "columns": [
+        {
+          "label": "Left / Right / Full / Col 1 etc",
+          "widgets": [
+            {
+              "type": "heading | text | button | image | icon-box | icon-list | testimonial | counter | spacer | divider | accordion | video | form | rating | progress | image-box",
+              "content": "actual proposed copy or description",
+              "note": "optional styling note e.g. h2, centered, white text"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+RULES:
+- Write REAL proposed copy (headlines, body text, button labels) — not placeholders
+- Be specific about layout per section
+- background values: "white" (#FFFFFF), "light" (#F3F6FB), "primary" (${project.colors.primary}), "dark" (${project.colors.dark})
+- Plan only — no Elementor JSON
+- Output ONLY the JSON object. First char "{", last char "}". No markdown.
+
+REQUEST:
+Type: ${mode === 'page' ? 'Full Page' : 'Single Section'}
+Brief: ${brief}${audience ? '\nAudience: ' + audience : ''}
+Tone: ${tone}
+Brand: ${project.name}`;
+}
+
+/* ══════════════════════════════════════════
+   WIREFRAME RENDERER
+══════════════════════════════════════════ */
+const BG_COLORS = {
+  white:   '#FFFFFF', light: '#F3F6FB',
+  primary: '#1CB7FF', dark:  '#29335C',
+};
+
+function bgColor(bg) {
+  if (!bg) return '#FFFFFF';
+  if (bg.startsWith('#')) return bg;
+  return BG_COLORS[bg] || '#FFFFFF';
+}
+
+function isDark(bg) {
+  const c = bgColor(bg);
+  const hex = c.replace('#','');
+  const r = parseInt(hex.slice(0,2),16);
+  const g = parseInt(hex.slice(2,4),16);
+  const b = parseInt(hex.slice(4,6),16);
+  return (r*299 + g*587 + b*114) / 1000 < 128;
+}
+
+function widgetClass(type) {
+  const map = {
+    heading:'wf-w-heading', text:'wf-w-text', 'text-editor':'wf-w-text',
+    button:'wf-w-button', image:'wf-w-image',
+    'icon-box':'wf-w-iconbox', 'icon-list':'wf-w-list',
+    testimonial:'wf-w-testimonial', counter:'wf-w-counter',
+    spacer:'wf-w-spacer', divider:'wf-w-divider',
+    accordion:'wf-w-accordion', video:'wf-w-video',
+    form:'wf-w-form', rating:'wf-w-other',
+    progress:'wf-w-other', 'image-box':'wf-w-iconbox',
+  };
+  return map[type] || 'wf-w-other';
+}
+
+function renderWireframe(wf) {
+  const container = document.getElementById('wireframe-container');
+  if (!wf || !wf.sections) { container.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Could not parse wireframe.</p>'; return; }
+
+  let html = `
+    <div style="margin-bottom:20px;">
+      <div style="font-size:16px;font-weight:700;color:var(--text-dark);margin-bottom:4px;">${wf.title || 'Wireframe Plan'}</div>
+      <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">${wf.summary || ''}</div>
+    </div>
+  `;
+
+  wf.sections.forEach((sec, i) => {
+    const bg   = bgColor(sec.background);
+    const dark = isDark(sec.background);
+    const textCol = dark ? 'rgba(255,255,255,0.5)' : 'var(--text-muted)';
+    const swatchStyle = `background:${bg};border:1px solid rgba(0,0,0,0.1);`;
+
+    html += `<div class="wf-section">
+      <div class="wf-section-header">
+        <div class="wf-section-num">${i+1}</div>
+        <div class="wf-section-name">${sec.name || 'Section'}</div>
+        <div class="wf-section-layout">${sec.layout || ''}</div>
+        <div class="wf-bg-chip">
+          <div class="wf-bg-swatch" style="${swatchStyle}"></div>
+          <span>${sec.background || 'white'}</span>
+        </div>
+      </div>
+      <div class="wf-section-body">`;
+
+    const cols = sec.columns || [];
+    const multiCol = cols.length > 1;
+    if (multiCol) html += `<div class="wf-cols">`;
+
+    cols.forEach(col => {
+      html += `<div class="${multiCol ? 'wf-col' : ''}">`;
+      if (multiCol) html += `<div class="wf-col-label">${col.label || ''}</div>`;
+      (col.widgets || []).forEach(w => {
+        html += `<div class="wf-widget ${widgetClass(w.type)}">
+          <div class="wf-widget-type">${w.type}</div>
+          <div class="wf-widget-content">${w.content || ''}</div>
+          ${w.note ? `<div class="wf-widget-sub">${w.note}</div>` : ''}
+        </div>`;
+      });
+      html += `</div>`;
+    });
+
+    if (multiCol) html += `</div>`;
+    html += `</div></div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+/* ══════════════════════════════════════════
+   GENERATE — STEP 1: WIREFRAME
+══════════════════════════════════════════ */
 async function generate() {
-  const apiKey   = document.getElementById('api-key').value.trim();
-  const brief    = document.getElementById('brief').value.trim();
-  const audience = document.getElementById('audience').value.trim();
-  const tone     = document.getElementById('tone').value;
-  const project  = getActiveProject();
+  const apiKey  = document.getElementById('api-key').value.trim();
+  const brief   = document.getElementById('brief').value.trim();
+  const audience= document.getElementById('audience').value.trim();
+  const tone    = document.getElementById('tone').value;
+  const project = getActiveProject();
 
   if (!apiKey)  { toast('Add your Anthropic API key first.', 'error'); return; }
   if (!brief)   { toast('Write a brief before generating.', 'error'); return; }
   if (!project) { toast('Select a project first.', 'error'); return; }
 
-  setLoading(true);
-  setStatus('blue', `Generating for ${project.name}…`);
-  document.getElementById('empty-state').style.display = 'none';
-  document.getElementById('code-output').value = '';
-  const t0 = Date.now();
+  // Save context for later steps
+  currentBrief   = brief;
+  currentAudience= audience;
+  currentTone    = tone;
 
+  setLoading(true, 'Planning wireframe…');
+  setStatus('blue', 'Planning…');
+
+  const name = brief.length > 44 ? brief.slice(0, 44) + '…' : brief;
+  document.getElementById('output-name').textContent = name;
+  const tag = document.getElementById('output-tag');
+  tag.style.display = 'inline-block';
+  tag.textContent = currentMode === 'page' ? 'Full Page' : 'Section';
+  tag.className = 'output-tag ' + (currentMode === 'page' ? 'tag-page' : 'tag-section');
+
+  showStage('wireframe');
+  document.getElementById('wireframe-container').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:14px;padding-top:8px;">
+      ${[1,2,3].map(i => `
+        <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--white);">
+          <div style="background:var(--ghost-bg);height:40px;display:flex;align-items:center;gap:8px;padding:0 16px;">
+            <div style="width:20px;height:20px;border-radius:50%;background:var(--border);"></div>
+            <div style="width:${80+i*30}px;height:10px;background:var(--border);border-radius:4px;"></div>
+          </div>
+          <div style="padding:14px 16px;display:flex;gap:10px;">
+            ${i < 3 ? '<div style="flex:1;background:var(--ghost-bg);border:1px dashed var(--border);border-radius:6px;height:80px;"></div>'.repeat(i === 1 ? 1 : i === 2 ? 2 : 3) : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+
+  try {
+    const wfPrompt = buildWireframePrompt(brief, audience, tone, currentMode, project);
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 3000,
+        messages: [{ role: 'user', content: wfPrompt }],
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    const raw  = data.content?.[0]?.text || '';
+
+    // Parse wireframe JSON
+    const jsonStart = raw.indexOf('{');
+    const jsonEnd   = raw.lastIndexOf('}');
+    if (jsonStart === -1 || jsonEnd === -1) throw new Error('Could not parse wireframe plan.');
+    const wfJSON = raw.slice(jsonStart, jsonEnd + 1);
+    currentWireframe = JSON.parse(wfJSON);
+
+    renderWireframe(currentWireframe);
+    setStatus('green', 'Review wireframe');
+    toast('Wireframe ready — approve or revise');
+
+  } catch (err) {
+    showStage('empty');
+    setStatus('red', 'Error');
+    toast(err.message || 'Wireframe failed.', 'error');
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+}
+
+/* ══════════════════════════════════════════
+   REVISE WIREFRAME
+══════════════════════════════════════════ */
+function reviseWireframe() {
+  const bar = document.getElementById('revision-bar');
+  bar.style.display = bar.style.display === 'none' ? 'flex' : 'none';
+  if (bar.style.display === 'flex') {
+    document.getElementById('revision-input').focus();
+  }
+}
+
+async function submitRevision() {
+  const feedback = document.getElementById('revision-input').value.trim();
+  if (!feedback) return;
+
+  const apiKey  = document.getElementById('api-key').value.trim();
+  const project = getActiveProject();
+  if (!apiKey) { toast('Add your API key first.', 'error'); return; }
+
+  document.getElementById('revision-input').value = '';
+  document.getElementById('revision-bar').style.display = 'none';
+
+  setLoading(true, 'Revising…');
+  setStatus('blue', 'Revising wireframe…');
+
+  // Show skeleton again
+  document.getElementById('wireframe-container').innerHTML = `<div style="font-size:13px;color:var(--text-muted);padding:20px 0;">Revising plan…</div>`;
+
+  try {
+    const revisePrompt = `${buildWireframePrompt(currentBrief, currentAudience, currentTone, currentMode, project)}
+
+CURRENT WIREFRAME:
+${JSON.stringify(currentWireframe, null, 2)}
+
+USER FEEDBACK:
+${feedback}
+
+Revise the wireframe based on this feedback. Output only the updated JSON object.`;
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 3000,
+        messages: [{ role: 'user', content: revisePrompt }],
+      }),
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const raw  = data.content?.[0]?.text || '';
+    const s = raw.indexOf('{'), e = raw.lastIndexOf('}');
+    if (s === -1 || e === -1) throw new Error('Could not parse revised wireframe.');
+    currentWireframe = JSON.parse(raw.slice(s, e + 1));
+
+    renderWireframe(currentWireframe);
+    setStatus('green', 'Wireframe revised');
+    toast('Wireframe updated');
+  } catch (err) {
+    setStatus('red', 'Error');
+    toast(err.message || 'Revision failed.', 'error');
+    renderWireframe(currentWireframe); // re-render old one
+  } finally {
+    setLoading(false);
+  }
+}
+
+/* ══════════════════════════════════════════
+   APPROVE → GENERATE JSON
+══════════════════════════════════════════ */
+async function approveWireframe() {
+  const apiKey  = document.getElementById('api-key').value.trim();
+  const project = getActiveProject();
+  if (!apiKey) { toast('Add your API key first.', 'error'); return; }
+
+  setLoading(true, 'Building Elementor JSON…');
+  setStatus('blue', 'Building…');
+
+  const badge = document.getElementById('stage-badge');
+  badge.className = 'stage-badge building';
+  badge.textContent = 'Building…';
+
+  // Switch to JSON view and stream into it
+  showStage('json');
+  document.getElementById('code-output').value = '';
+
+  const t0 = Date.now();
   const systemPrompt = buildSystemPrompt(project);
+
   const userPrompt = [
     `OUTPUT TYPE: ${currentMode === 'page' ? 'FULL PAGE (multiple sections in one array)' : 'SINGLE SECTION (one section in array)'}`,
-    `BRIEF: ${brief}`,
-    audience ? `TARGET AUDIENCE: ${audience}` : '',
-    `TONE: ${tone}`,
+    `BRIEF: ${currentBrief}`,
+    currentAudience ? `TARGET AUDIENCE: ${currentAudience}` : '',
+    `TONE: ${currentTone}`,
+    ``,
+    `APPROVED WIREFRAME PLAN (follow this structure exactly):`,
+    JSON.stringify(currentWireframe, null, 2),
+    ``,
+    `Build this wireframe as Elementor Pro JSON. Use the exact sections, layouts, and copy from the wireframe.`,
     `Remember: output ONLY raw JSON starting with "[". No markdown, no explanation.`,
   ].filter(Boolean).join('\n');
 
@@ -1868,12 +2448,10 @@ async function generate() {
       throw new Error(err?.error?.message || `HTTP ${res.status}`);
     }
 
-    // Stream the response and show it live in the textarea
-    const area = document.getElementById('code-output');
-    const reader = res.body.getReader();
+    const area    = document.getElementById('code-output');
+    const reader  = res.body.getReader();
     const decoder = new TextDecoder();
-    let raw = '';
-    let stopReason = '';
+    let raw = '', stopReason = '';
 
     while (true) {
       const { done, value } = await reader.read();
@@ -1898,11 +2476,9 @@ async function generate() {
     }
 
     const jsonText = extractJSON(raw);
-    if (!jsonText) throw new Error('Claude returned non-JSON content. Try regenerating.');
+    if (!jsonText) throw new Error('Claude returned non-JSON. Try regenerating.');
 
-    let finalJSON = jsonText;
-    let wasRepaired = false;
-
+    let finalJSON = jsonText, wasRepaired = false;
     try {
       JSON.parse(finalJSON);
     } catch {
@@ -1911,34 +2487,41 @@ async function generate() {
         JSON.parse(repaired);
         finalJSON = repaired;
         wasRepaired = true;
-        console.warn('JSON truncated and auto-repaired. Stop reason:', stopReason);
       } catch (e2) {
         area.value = jsonText;
-        throw new Error(
-          stopReason === 'max_tokens'
-            ? 'Output hit the token limit. Use "Section" mode instead of "Full Page", or shorten your brief.'
-            : `Malformed JSON — try regenerating. (${e2.message})`
-        );
+        throw new Error(stopReason === 'max_tokens'
+          ? 'Hit token limit. Try Section mode or shorten your brief.'
+          : `Malformed JSON — try regenerating. (${e2.message})`);
       }
     }
 
     currentJSON = finalJSON;
-    displayOutput(currentJSON, brief, currentMode);
     const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+    showStage('json');
     setStatus('green', wasRepaired ? 'Done (auto-repaired)' : 'Done');
     showStats(currentJSON, elapsed);
-    addHistory(brief, currentMode, project.name);
-    toast(wasRepaired ? 'Generated & auto-repaired ✓' : 'Template generated!', 'success');
+    addHistory(currentBrief, currentMode, project.name);
+    toast(wasRepaired ? 'Built & auto-repaired ✓' : 'Elementor JSON ready!', 'success');
 
   } catch (err) {
+    showStage('wireframe');
+    renderWireframe(currentWireframe);
     setStatus('red', 'Error');
-    toast(err.message || 'Generation failed.', 'error');
+    toast(err.message || 'Build failed.', 'error');
     console.error(err);
   } finally {
     setLoading(false);
   }
 }
 
+function backToWireframe() {
+  showStage('wireframe');
+  setStatus('green', 'Review wireframe');
+}
+
+/* ══════════════════════════════════════════
+   JSON UTILITIES
+══════════════════════════════════════════ */
 function extractJSON(raw) {
   raw = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
   const start = raw.indexOf('[');
@@ -1948,70 +2531,48 @@ function extractJSON(raw) {
 }
 
 function smartRepairJSON(str) {
-  // Step 1: Remove trailing commas before } or ]
   str = str.replace(/,\s*([}\]])/g, '$1');
-
-  // Step 2: Find the last position where a complete top-level section object ends.
-  // Walk backwards to find the last clean '}, ' or '}' before a '[' or end,
-  // then close the root array there cleanly.
-  // Strategy: try progressively shorter truncations until JSON.parse succeeds.
-  // Find last '}' and try closing array after it.
-  let attempt = str;
-
-  // Trim to last complete object: scan backwards from end for '}'
-  // then append missing closers
   const lastBrace = str.lastIndexOf('}');
   if (lastBrace !== -1) {
-    attempt = str.slice(0, lastBrace + 1);
-    // Remove any trailing comma after the last brace
-    attempt = attempt.replace(/,\s*$/, '');
-    // Count and close any open braces/brackets BEFORE the last brace
-    const ob = (attempt.match(/{/g)  || []).length;
-    const cb = (attempt.match(/}/g)  || []).length;
+    let attempt = str.slice(0, lastBrace + 1).replace(/,\s*$/, '');
+    const ob = (attempt.match(/{/g) || []).length;
+    const cb = (attempt.match(/}/g) || []).length;
     const oa = (attempt.match(/\[/g) || []).length;
     const ca = (attempt.match(/\]/g) || []).length;
     for (let i = 0; i < ob - cb; i++) attempt += '}';
     for (let i = 0; i < oa - ca; i++) attempt += ']';
+    if (isValidJSON(attempt)) return attempt;
   }
-
-  // If still broken, try walking back element by element:
-  // find the second-to-last top-level '},' and close there
-  if (!isValidJSON(attempt)) {
-    const matches = [...str.matchAll(/},\s*\n\s*{/g)];
-    if (matches.length > 0) {
-      const lastClean = matches[matches.length - 1].index + 1;
-      attempt = str.slice(0, lastClean) + ']';
-    }
+  const matches = [...str.matchAll(/},\s*\n\s*{/g)];
+  if (matches.length > 0) {
+    const lastClean = matches[matches.length - 1].index + 1;
+    return str.slice(0, lastClean) + ']';
   }
-
-  return attempt;
+  return str;
 }
 
 function isValidJSON(s) {
   try { JSON.parse(s); return true; } catch { return false; }
 }
 
+function wrapForElementor(jsonStr, title) {
+  return {
+    version: '0.4',
+    title: title || 'ElementorDrops Template',
+    type: 'page',
+    page_settings: {},
+    content: JSON.parse(jsonStr),
+  };
+}
+
 /* ══════════════════════════════════════════
    UI HELPERS
 ══════════════════════════════════════════ */
-function displayOutput(json, brief, mode) {
-  const pretty = JSON.stringify(JSON.parse(json), null, 2);
-  document.getElementById('code-output').value = pretty;
-  document.getElementById('empty-state').style.display = 'none';
-  const name = brief.length > 44 ? brief.slice(0, 44) + '…' : brief;
-  document.getElementById('output-name').textContent = name;
-  const tag = document.getElementById('output-tag');
-  tag.style.display = 'inline-block';
-  tag.textContent = mode === 'page' ? 'Full Page' : 'Section';
-  tag.className = 'output-tag ' + (mode === 'page' ? 'tag-page' : 'tag-section');
-  ['btn-copy','btn-validate','btn-download'].forEach(id => document.getElementById(id).disabled = false);
-}
-
-function setLoading(on) {
+function setLoading(on, label = 'Planning…') {
   document.getElementById('btn-generate').disabled = on;
   document.getElementById('spinner').style.display  = on ? 'block' : 'none';
   document.getElementById('btn-icon').style.display = on ? 'none' : 'block';
-  document.getElementById('btn-label').textContent  = on ? 'Generating…' : 'Generate Elementor JSON';
+  document.getElementById('btn-label').textContent  = on ? label : 'Plan & Build';
 }
 
 function setStatus(color, text) {
@@ -2042,48 +2603,30 @@ function countWidgets(obj) {
 function copyJSON() {
   if (!currentJSON) return;
   const title = document.getElementById('output-name').textContent;
-  const wrapped = wrapForElementor(currentJSON, title);
-  navigator.clipboard.writeText(JSON.stringify(wrapped, null, 2))
-    .then(() => toast('Copied (Elementor format)!', 'success'));
+  navigator.clipboard.writeText(JSON.stringify(wrapForElementor(currentJSON, title), null, 2))
+    .then(() => toast('Copied!', 'success'));
 }
 
 function validateJSON() {
   if (!currentJSON) return;
   try {
-    const sections = JSON.parse(currentJSON);
-    if (!Array.isArray(sections)) throw new Error('Root must be an array of sections');
-    const sectionCount = sections.filter(s => s.elType === 'section' && !s.isInner).length;
-    const widgets = countWidgets(sections);
-    // Also validate the wrapper
-    const wrapped = wrapForElementor(currentJSON, 'test');
-    if (wrapped.version !== '0.4') throw new Error('Wrapper malformed');
-    toast(`✓ Valid — ${sectionCount} section(s), ${widgets} widget(s), Elementor import-ready`, 'success');
+    const parsed = JSON.parse(currentJSON);
+    const containers = Array.isArray(parsed) ? parsed.filter(s => s.elType === 'container' && !s.isInner).length : 0;
+    const widgets = countWidgets(parsed);
+    toast(`✓ Valid — ${containers} container(s), ${widgets} widget(s)`, 'success');
   } catch (e) { toast('Invalid: ' + e.message, 'error'); }
-}
-
-function wrapForElementor(jsonStr, title) {
-  // Exact format from real Elementor Pro export — required for import
-  const containers = JSON.parse(jsonStr);
-  return {
-    version: "0.4",
-    title: title || "ElementorDrops Template",
-    type: "page",
-    page_settings: {},
-    content: containers
-  };
 }
 
 function downloadJSON() {
   if (!currentJSON) return;
   const title = document.getElementById('output-name').textContent;
-  const wrapped = wrapForElementor(currentJSON, title);
-  const pretty = JSON.stringify(wrapped, null, 2);
+  const pretty = JSON.stringify(wrapForElementor(currentJSON, title), null, 2);
   const blob = new Blob([pretty], { type: 'application/json' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  const fname = title
-    .replace(/[^a-z0-9]+/gi, '-').toLowerCase().replace(/^-|-$/g, '').slice(0, 50) || 'elementor-template';
-  a.href = url; a.download = `${fname}.json`; a.click();
+  a.href = url;
+  a.download = (title.replace(/[^a-z0-9]+/gi, '-').toLowerCase().slice(0,50) || 'elementor-template') + '.json';
+  a.click();
   URL.revokeObjectURL(url);
   toast('Downloading…');
 }
@@ -2137,7 +2680,7 @@ function toggleApiKey() {
    HISTORY
 ══════════════════════════════════════════ */
 function addHistory(brief, mode, projectName) {
-  historyItems.unshift({ brief, mode, json: currentJSON, projectName });
+  historyItems.unshift({ brief, mode, json: currentJSON, wireframe: currentWireframe, projectName });
   if (historyItems.length > 8) historyItems.pop();
   renderHistory();
 }
@@ -2160,8 +2703,17 @@ function renderHistory() {
 function loadHistory(i) {
   const item = historyItems[i];
   if (!item) return;
-  currentJSON = item.json;
-  displayOutput(item.json, item.brief, item.mode);
+  currentJSON      = item.json;
+  currentWireframe = item.wireframe;
+  currentBrief     = item.brief;
+  const name = item.brief.length > 44 ? item.brief.slice(0,44)+'…' : item.brief;
+  document.getElementById('output-name').textContent = name;
+  const tag = document.getElementById('output-tag');
+  tag.style.display = 'inline-block';
+  tag.textContent = item.mode === 'page' ? 'Full Page' : 'Section';
+  tag.className = 'output-tag ' + (item.mode === 'page' ? 'tag-page' : 'tag-section');
+  document.getElementById('code-output').value = JSON.stringify(JSON.parse(item.json), null, 2);
+  showStage('json');
   document.querySelectorAll('.history-item').forEach((el, idx) => el.classList.toggle('active', idx === i));
   setStatus('blue', 'Loaded from history');
 }
@@ -2181,11 +2733,17 @@ function toast(msg, type = '') {
    INIT
 ══════════════════════════════════════════ */
 document.addEventListener('keydown', e => {
-  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') generate();
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    if (appStage === 'wireframe') approveWireframe();
+    else generate();
+  }
   if (e.key === 'Escape') closeModal();
+  if (e.key === 'Enter' && document.activeElement.id === 'revision-input') submitRevision();
 });
 
 renderProjectSelector();
+showStage('empty');
+
 </script>
 </body>
 </html>
