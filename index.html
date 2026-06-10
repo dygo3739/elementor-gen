@@ -350,6 +350,28 @@
       font-size: 12px; padding: 7px 10px; flex: 1;
     }
     .modal-footer { display: flex; gap: 8px; justify-content: flex-end; padding: 0 24px 20px; }
+    .modal-tabs {
+      display: flex; gap: 0; border-bottom: 1px solid var(--border);
+      padding: 0 24px; overflow-x: auto;
+    }
+    .modal-tab {
+      font-family: var(--font); font-size: 12px; font-weight: 600;
+      color: var(--text-muted); background: none; border: none;
+      border-bottom: 2px solid transparent; padding: 10px 14px;
+      cursor: pointer; white-space: nowrap; transition: color 0.15s, border-color 0.15s;
+      margin-bottom: -1px;
+    }
+    .modal-tab:hover { color: var(--text-dark); }
+    .modal-tab.active { color: var(--app-blue); border-bottom-color: var(--app-blue); }
+    .modal-section-label {
+      font-size: 11px; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
+    }
+    .modal-hint {
+      font-size: 11px; color: var(--text-muted); line-height: 1.5;
+      background: #fffbeb; border: 1px solid #fde68a; border-radius: 5px;
+      padding: 8px 10px; margin-bottom: 14px;
+    }
     .btn-modal {
       font-family: var(--font); font-size: 13px; font-weight: 600;
       border-radius: 6px; padding: 9px 20px; cursor: pointer; transition: all 0.12s;
@@ -544,18 +566,45 @@
 
 <!-- ── PROJECT MODAL ── -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
-  <div class="modal" id="modal">
+  <div class="modal" id="modal" style="width:600px;">
     <div class="modal-header">
       <div class="modal-title" id="modal-title">New Project</div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-    <div class="modal-body">
+
+    <!-- Tab nav mirrors Elementor Site Settings sections -->
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchTab(this,'tab-info')">Project</button>
+      <button class="modal-tab" onclick="switchTab(this,'tab-colors')">Global Colors</button>
+      <button class="modal-tab" onclick="switchTab(this,'tab-typography')">Typography</button>
+      <button class="modal-tab" onclick="switchTab(this,'tab-buttons')">Buttons</button>
+      <button class="modal-tab" onclick="switchTab(this,'tab-images')">Images</button>
+    </div>
+
+    <!-- TAB: Project info -->
+    <div class="modal-body" id="tab-info">
       <div class="modal-field">
         <label>Project / Brand Name</label>
         <input type="text" id="m-name" placeholder="e.g. BizInZip, Acme Realty…" />
       </div>
-      <div class="modal-divider"></div>
-      <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;">Brand Colors</div>
+      <div class="modal-field">
+        <label>Site / Brand Description <span style="font-weight:400;color:var(--text-muted)">(helps Claude write better copy)</span></label>
+        <input type="text" id="m-desc" placeholder="e.g. CRM for independent insurance agents to manage leads and renewals" />
+      </div>
+      <div class="modal-field">
+        <label>Section Padding Top (px)</label>
+        <input type="text" id="m-pad-top" placeholder="80" value="80" />
+      </div>
+      <div class="modal-field">
+        <label>Section Padding Bottom (px)</label>
+        <input type="text" id="m-pad-bot" placeholder="80" value="80" />
+      </div>
+    </div>
+
+    <!-- TAB: Global Colors — mirrors Elementor exactly -->
+    <div class="modal-body" id="tab-colors" style="display:none">
+      <div class="modal-section-label">System Colors</div>
+      <div class="modal-hint">These map to Elementor's 4 system color slots: Primary, Secondary, Text, Accent.</div>
       <div class="color-grid">
         <div class="color-row">
           <label>Primary</label>
@@ -565,10 +614,17 @@
           </div>
         </div>
         <div class="color-row">
-          <label>Primary Hover</label>
+          <label>Secondary (Dark / Navy)</label>
           <div class="color-input-wrap">
-            <input type="color" id="m-primary-h" value="#00D5FF" oninput="syncColor('m-primary-h','m-primary-h-hex')">
-            <input type="text" id="m-primary-h-hex" value="#00D5FF" maxlength="7" oninput="syncHex('m-primary-h-hex','m-primary-h')">
+            <input type="color" id="m-dark" value="#29335C" oninput="syncColor('m-dark','m-dark-hex')">
+            <input type="text" id="m-dark-hex" value="#29335C" maxlength="7" oninput="syncHex('m-dark-hex','m-dark')">
+          </div>
+        </div>
+        <div class="color-row">
+          <label>Text (body copy color)</label>
+          <div class="color-input-wrap">
+            <input type="color" id="m-text-mid" value="#54494B" oninput="syncColor('m-text-mid','m-text-mid-hex')">
+            <input type="text" id="m-text-mid-hex" value="#54494B" maxlength="7" oninput="syncHex('m-text-mid-hex','m-text-mid')">
           </div>
         </div>
         <div class="color-row">
@@ -578,29 +634,26 @@
             <input type="text" id="m-accent-hex" value="#13CE66" maxlength="7" oninput="syncHex('m-accent-hex','m-accent')">
           </div>
         </div>
+      </div>
+      <div class="modal-divider"></div>
+      <div class="modal-section-label">Custom Colors</div>
+      <div class="color-grid">
         <div class="color-row">
-          <label>Dark / Navy</label>
+          <label>Primary Hover</label>
           <div class="color-input-wrap">
-            <input type="color" id="m-dark" value="#29335C" oninput="syncColor('m-dark','m-dark-hex')">
-            <input type="text" id="m-dark-hex" value="#29335C" maxlength="7" oninput="syncHex('m-dark-hex','m-dark')">
+            <input type="color" id="m-primary-h" value="#00D5FF" oninput="syncColor('m-primary-h','m-primary-h-hex')">
+            <input type="text" id="m-primary-h-hex" value="#00D5FF" maxlength="7" oninput="syncHex('m-primary-h-hex','m-primary-h')">
           </div>
         </div>
         <div class="color-row">
-          <label>Text (headings)</label>
+          <label>Heading Text</label>
           <div class="color-input-wrap">
             <input type="color" id="m-text-dark" value="#0D0E12" oninput="syncColor('m-text-dark','m-text-dark-hex')">
             <input type="text" id="m-text-dark-hex" value="#0D0E12" maxlength="7" oninput="syncHex('m-text-dark-hex','m-text-dark')">
           </div>
         </div>
         <div class="color-row">
-          <label>Text (body)</label>
-          <div class="color-input-wrap">
-            <input type="color" id="m-text-mid" value="#54494B" oninput="syncColor('m-text-mid','m-text-mid-hex')">
-            <input type="text" id="m-text-mid-hex" value="#54494B" maxlength="7" oninput="syncHex('m-text-mid-hex','m-text-mid')">
-          </div>
-        </div>
-        <div class="color-row">
-          <label>Light BG</label>
+          <label>Light Background</label>
           <div class="color-input-wrap">
             <input type="color" id="m-light-bg" value="#F3F6FB" oninput="syncColor('m-light-bg','m-light-bg-hex')">
             <input type="text" id="m-light-bg-hex" value="#F3F6FB" maxlength="7" oninput="syncHex('m-light-bg-hex','m-light-bg')">
@@ -614,31 +667,182 @@
           </div>
         </div>
       </div>
-      <div class="modal-divider"></div>
-      <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;">Typography & Layout</div>
+    </div>
+
+    <!-- TAB: Typography — mirrors Elementor Site Settings > Typography -->
+    <div class="modal-body" id="tab-typography" style="display:none">
+      <div class="modal-hint">These settings match Elementor's Typography section in Site Settings.</div>
+      <div class="modal-section-label">Body</div>
       <div class="color-grid">
-        <div class="modal-field">
+        <div class="modal-field" style="grid-column:1/-1">
           <label>Font Family</label>
           <input type="text" id="m-font" placeholder="DM Sans" value="DM Sans" />
         </div>
+        <div class="color-row">
+          <label>Body Text Color</label>
+          <div class="color-input-wrap">
+            <input type="color" id="m-body-color" value="#54494B" oninput="syncColor('m-body-color','m-body-color-hex')">
+            <input type="text" id="m-body-color-hex" value="#54494B" maxlength="7" oninput="syncHex('m-body-color-hex','m-body-color')">
+          </div>
+        </div>
+        <div class="modal-field">
+          <label>Body Font Size (px)</label>
+          <input type="text" id="m-body-size" placeholder="16" value="16" />
+        </div>
+        <div class="modal-field">
+          <label>Body Font Weight</label>
+          <select id="m-body-weight">
+            <option value="400" selected>400 Regular</option>
+            <option value="500">500 Medium</option>
+            <option value="600">600 SemiBold</option>
+            <option value="700">700 Bold</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label>Line Height (em)</label>
+          <input type="text" id="m-body-lh" placeholder="1.7" value="1.7" />
+        </div>
+      </div>
+      <div class="modal-divider"></div>
+      <div class="modal-section-label">Headings</div>
+      <div class="color-grid">
+        <div class="color-row">
+          <label>H1–H6 Color</label>
+          <div class="color-input-wrap">
+            <input type="color" id="m-heading-color" value="#0D0E12" oninput="syncColor('m-heading-color','m-heading-color-hex')">
+            <input type="text" id="m-heading-color-hex" value="#0D0E12" maxlength="7" oninput="syncHex('m-heading-color-hex','m-heading-color')">
+          </div>
+        </div>
+        <div class="modal-field">
+          <label>Heading Font Weight</label>
+          <select id="m-heading-weight">
+            <option value="400">400 Regular</option>
+            <option value="500">500 Medium</option>
+            <option value="600">600 SemiBold</option>
+            <option value="700" selected>700 Bold</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label>H1 Size (px)</label>
+          <input type="text" id="m-h1-size" placeholder="56" value="56" />
+        </div>
+        <div class="modal-field">
+          <label>H2 Size (px)</label>
+          <input type="text" id="m-h2-size" placeholder="42" value="42" />
+        </div>
+        <div class="modal-field">
+          <label>H3 Size (px)</label>
+          <input type="text" id="m-h3-size" placeholder="28" value="28" />
+        </div>
+        <div class="modal-field">
+          <label>H4 Size (px)</label>
+          <input type="text" id="m-h4-size" placeholder="22" value="22" />
+        </div>
+      </div>
+      <div class="modal-divider"></div>
+      <div class="modal-section-label">Links</div>
+      <div class="color-grid">
+        <div class="color-row">
+          <label>Link Color (Normal)</label>
+          <div class="color-input-wrap">
+            <input type="color" id="m-link-color" value="#1CB7FF" oninput="syncColor('m-link-color','m-link-color-hex')">
+            <input type="text" id="m-link-color-hex" value="#1CB7FF" maxlength="7" oninput="syncHex('m-link-color-hex','m-link-color')">
+          </div>
+        </div>
+        <div class="color-row">
+          <label>Link Color (Hover)</label>
+          <div class="color-input-wrap">
+            <input type="color" id="m-link-hover" value="#00D5FF" oninput="syncColor('m-link-hover','m-link-hover-hex')">
+            <input type="text" id="m-link-hover-hex" value="#00D5FF" maxlength="7" oninput="syncHex('m-link-hover-hex','m-link-hover')">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Buttons — mirrors Elementor Site Settings > Buttons -->
+    <div class="modal-body" id="tab-buttons" style="display:none">
+      <div class="modal-hint">These match Elementor's Buttons section in Site Settings.</div>
+      <div class="modal-section-label">Normal State</div>
+      <div class="color-grid">
+        <div class="color-row">
+          <label>Text Color</label>
+          <div class="color-input-wrap">
+            <input type="color" id="m-btn-text" value="#FFFFFF" oninput="syncColor('m-btn-text','m-btn-text-hex')">
+            <input type="text" id="m-btn-text-hex" value="#FFFFFF" maxlength="7" oninput="syncHex('m-btn-text-hex','m-btn-text')">
+          </div>
+        </div>
+        <div class="color-row">
+          <label>Background Color</label>
+          <div class="color-input-wrap">
+            <input type="color" id="m-btn-bg" value="#1CB7FF" oninput="syncColor('m-btn-bg','m-btn-bg-hex')">
+            <input type="text" id="m-btn-bg-hex" value="#1CB7FF" maxlength="7" oninput="syncHex('m-btn-bg-hex','m-btn-bg')">
+          </div>
+        </div>
+      </div>
+      <div class="modal-section-label" style="margin-top:14px">Hover State</div>
+      <div class="color-grid">
+        <div class="color-row">
+          <label>Text Color (Hover)</label>
+          <div class="color-input-wrap">
+            <input type="color" id="m-btn-hover-text" value="#FFFFFF" oninput="syncColor('m-btn-hover-text','m-btn-hover-text-hex')">
+            <input type="text" id="m-btn-hover-text-hex" value="#FFFFFF" maxlength="7" oninput="syncHex('m-btn-hover-text-hex','m-btn-hover-text')">
+          </div>
+        </div>
+        <div class="color-row">
+          <label>Background (Hover)</label>
+          <div class="color-input-wrap">
+            <input type="color" id="m-btn-hover-bg" value="#00D5FF" oninput="syncColor('m-btn-hover-bg','m-btn-hover-bg-hex')">
+            <input type="text" id="m-btn-hover-bg-hex" value="#00D5FF" maxlength="7" oninput="syncHex('m-btn-hover-bg-hex','m-btn-hover-bg')">
+          </div>
+        </div>
+      </div>
+      <div class="modal-divider"></div>
+      <div class="modal-section-label">Shape & Spacing</div>
+      <div class="color-grid">
         <div class="modal-field">
           <label>Border Radius (px)</label>
           <input type="text" id="m-radius" placeholder="8" value="8" />
         </div>
         <div class="modal-field">
-          <label>Section Padding Top (px)</label>
-          <input type="text" id="m-pad-top" placeholder="80" value="80" />
+          <label>Font Size (px)</label>
+          <input type="text" id="m-btn-font-size" placeholder="16" value="16" />
         </div>
         <div class="modal-field">
-          <label>Section Padding Bottom (px)</label>
-          <input type="text" id="m-pad-bot" placeholder="80" value="80" />
+          <label>Font Weight</label>
+          <select id="m-btn-font-weight">
+            <option value="400">400 Regular</option>
+            <option value="500">500 Medium</option>
+            <option value="600" selected>600 SemiBold</option>
+            <option value="700">700 Bold</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label>Padding V (px)</label>
+          <input type="text" id="m-btn-pad-v" placeholder="14" value="14" />
+        </div>
+        <div class="modal-field">
+          <label>Padding H (px)</label>
+          <input type="text" id="m-btn-pad-h" placeholder="32" value="32" />
         </div>
       </div>
-      <div class="modal-field">
-        <label>Site / Brand Description (helps Claude write better copy)</label>
-        <input type="text" id="m-desc" placeholder="e.g. CRM for independent insurance agents to manage leads and renewals" />
+    </div>
+
+    <!-- TAB: Images — mirrors Elementor Site Settings > Images -->
+    <div class="modal-body" id="tab-images" style="display:none">
+      <div class="modal-hint">These match Elementor's Images section in Site Settings.</div>
+      <div class="modal-section-label">Images</div>
+      <div class="color-grid">
+        <div class="modal-field">
+          <label>Border Radius (px)</label>
+          <input type="text" id="m-img-radius" placeholder="8" value="8" />
+        </div>
+        <div class="modal-field">
+          <label>Opacity (0–1)</label>
+          <input type="text" id="m-img-opacity" placeholder="1" value="1" />
+        </div>
       </div>
     </div>
+
     <div class="modal-footer">
       <button class="btn-modal cancel" onclick="closeModal()">Cancel</button>
       <button class="btn-modal save" onclick="saveProject()">Save Project</button>
@@ -658,20 +862,52 @@ const DEFAULT_PROJECTS = [
     id: 'bizinzip',
     name: 'BizInZip',
     desc: 'Platform helping small businesses and insurance agents streamline operations, manage leads, and automate follow-ups',
-    colors: {
-      primary:      '#1CB7FF',
-      primaryHover: '#00D5FF',
-      primaryLight: '#F1FAFF',
-      accent:       '#13CE66',
-      dark:         '#29335C',
-      textDark:     '#0D0E12',
-      textMid:      '#54494B',
-      lightBg:      '#F3F6FB',
-    },
-    font:      'DM Sans',
-    radius:    8,
-    padTop:    80,
+    padTop: 80,
     padBottom: 80,
+    // Global Colors (mirrors Elementor System + Custom Colors)
+    colors: {
+      primary:      '#1CB7FF',  // System: Primary
+      dark:         '#29335C',  // System: Secondary
+      textMid:      '#54494B',  // System: Text
+      accent:       '#13CE66',  // System: Accent
+      primaryHover: '#00D5FF',  // Custom: Primary Hover
+      textDark:     '#0D0E12',  // Custom: Heading Text
+      lightBg:      '#F3F6FB',  // Custom: Light BG
+      primaryLight: '#F1FAFF',  // Custom: Primary Light BG
+    },
+    // Typography (mirrors Elementor Typography section)
+    typography: {
+      font:         'DM Sans',
+      bodyColor:    '#54494B',
+      bodySize:     16,
+      bodyWeight:   '400',
+      bodyLineH:    1.7,
+      headingColor: '#0D0E12',
+      headingWeight:'700',
+      h1Size:       56,
+      h2Size:       42,
+      h3Size:       28,
+      h4Size:       22,
+      linkColor:    '#1CB7FF',
+      linkHover:    '#00D5FF',
+    },
+    // Buttons (mirrors Elementor Buttons section)
+    buttons: {
+      textColor:    '#FFFFFF',
+      bgColor:      '#1CB7FF',
+      hoverText:    '#FFFFFF',
+      hoverBg:      '#00D5FF',
+      radius:       8,
+      fontSize:     16,
+      fontWeight:   '600',
+      padV:         14,
+      padH:         32,
+    },
+    // Images (mirrors Elementor Images section)
+    images: {
+      radius:       8,
+      opacity:      1,
+    },
   }
 ];
 
@@ -719,21 +955,24 @@ function renderProjectSelector() {
 function renderBrandPreview() {
   const p = getActiveProject();
   if (!p) return;
+  const c = p.colors || {};
+  const ty = p.typography || {};
+  const bt = p.buttons || {};
   const wrap = document.getElementById('brand-preview');
   const swatches = [
-    { color: p.colors.primary,      title: 'Primary' },
-    { color: p.colors.primaryHover, title: 'Primary Hover' },
-    { color: p.colors.accent,       title: 'Accent' },
-    { color: p.colors.dark,         title: 'Dark' },
-    { color: p.colors.textDark,     title: 'Text Dark' },
-    { color: p.colors.textMid,      title: 'Text Mid' },
-    { color: p.colors.lightBg,      title: 'Light BG' },
-    { color: p.colors.primaryLight, title: 'Primary Light BG' },
-  ];
+    { color: c.primary,      title: 'Primary' },
+    { color: c.dark,         title: 'Secondary/Dark' },
+    { color: c.textMid,      title: 'Text' },
+    { color: c.accent,       title: 'Accent' },
+    { color: c.primaryHover, title: 'Primary Hover' },
+    { color: c.textDark,     title: 'Heading Text' },
+    { color: c.lightBg,      title: 'Light BG' },
+    { color: c.primaryLight, title: 'Primary Light BG' },
+  ].filter(s => s.color);
   wrap.innerHTML =
     swatches.map(s => `<div class="brand-swatch" style="background:${s.color}" title="${s.title}: ${s.color}"></div>`).join('') +
-    `<div class="brand-font-tag">${p.font}</div>` +
-    `<div class="brand-font-tag">r${p.radius}px</div>`;
+    `<div class="brand-font-tag">${ty.font || p.font || 'DM Sans'}</div>` +
+    `<div class="brand-font-tag">r${bt.radius || p.radius || 8}px</div>`;
 }
 
 function switchProject() {
@@ -746,54 +985,89 @@ function switchProject() {
 /* ══════════════════════════════════════════
    MODAL
 ══════════════════════════════════════════ */
-let modalMode = 'new'; // 'new' | 'edit'
+let modalMode = 'new';
+
+function switchTab(btn, tabId) {
+  document.querySelectorAll('.modal-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ['tab-info','tab-colors','tab-typography','tab-buttons','tab-images'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = id === tabId ? 'flex' : 'none';
+  });
+}
 
 function openModal(mode) {
   modalMode = mode;
   document.getElementById('modal-title').textContent = mode === 'new' ? 'New Project' : 'Edit Project';
-  const overlay = document.getElementById('modal-overlay');
 
-  if (mode === 'edit') {
-    const p = getActiveProject();
-    if (!p) return;
-    document.getElementById('m-name').value        = p.name;
-    document.getElementById('m-desc').value        = p.desc || '';
-    document.getElementById('m-font').value        = p.font;
-    document.getElementById('m-radius').value      = p.radius;
-    document.getElementById('m-pad-top').value     = p.padTop;
-    document.getElementById('m-pad-bot').value     = p.padBottom;
-    setColorField('m-primary',       p.colors.primary);
-    setColorField('m-primary-h',     p.colors.primaryHover);
-    setColorField('m-accent',        p.colors.accent);
-    setColorField('m-dark',          p.colors.dark);
-    setColorField('m-text-dark',     p.colors.textDark);
-    setColorField('m-text-mid',      p.colors.textMid);
-    setColorField('m-light-bg',      p.colors.lightBg);
-    setColorField('m-primary-light', p.colors.primaryLight);
-  } else {
-    // Reset to defaults
-    document.getElementById('m-name').value = '';
-    document.getElementById('m-desc').value = '';
-    document.getElementById('m-font').value = 'DM Sans';
-    document.getElementById('m-radius').value = '8';
-    document.getElementById('m-pad-top').value = '80';
-    document.getElementById('m-pad-bot').value = '80';
-    setColorField('m-primary',       '#1CB7FF');
-    setColorField('m-primary-h',     '#00D5FF');
-    setColorField('m-accent',        '#13CE66');
-    setColorField('m-dark',          '#29335C');
-    setColorField('m-text-dark',     '#0D0E12');
-    setColorField('m-text-mid',      '#54494B');
-    setColorField('m-light-bg',      '#F3F6FB');
-    setColorField('m-primary-light', '#F1FAFF');
-  }
+  // Reset to first tab
+  document.querySelectorAll('.modal-tab').forEach((b,i) => b.classList.toggle('active', i===0));
+  ['tab-info','tab-colors','tab-typography','tab-buttons','tab-images'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = i === 0 ? 'flex' : 'none';
+  });
 
-  overlay.classList.add('open');
+  const def = DEFAULT_PROJECTS[0];
+  const p = mode === 'edit' ? (getActiveProject() || def) : def;
+
+  // Tab: Project
+  document.getElementById('m-name').value    = mode === 'edit' ? p.name : '';
+  document.getElementById('m-desc').value    = mode === 'edit' ? (p.desc || '') : '';
+  document.getElementById('m-pad-top').value = p.padTop || 80;
+  document.getElementById('m-pad-bot').value = p.padBottom || 80;
+
+  // Tab: Global Colors
+  const c = p.colors || def.colors;
+  setColorField('m-primary',       c.primary      || '#1CB7FF');
+  setColorField('m-dark',          c.dark         || '#29335C');
+  setColorField('m-text-mid',      c.textMid      || '#54494B');
+  setColorField('m-accent',        c.accent       || '#13CE66');
+  setColorField('m-primary-h',     c.primaryHover || '#00D5FF');
+  setColorField('m-text-dark',     c.textDark     || '#0D0E12');
+  setColorField('m-light-bg',      c.lightBg      || '#F3F6FB');
+  setColorField('m-primary-light', c.primaryLight || '#F1FAFF');
+
+  // Tab: Typography
+  const ty = p.typography || def.typography;
+  document.getElementById('m-font').value          = ty.font         || 'DM Sans';
+  document.getElementById('m-body-size').value     = ty.bodySize     || 16;
+  document.getElementById('m-body-weight').value   = ty.bodyWeight   || '400';
+  document.getElementById('m-body-lh').value       = ty.bodyLineH    || 1.7;
+  document.getElementById('m-heading-weight').value= ty.headingWeight|| '700';
+  document.getElementById('m-h1-size').value       = ty.h1Size       || 56;
+  document.getElementById('m-h2-size').value       = ty.h2Size       || 42;
+  document.getElementById('m-h3-size').value       = ty.h3Size       || 28;
+  document.getElementById('m-h4-size').value       = ty.h4Size       || 22;
+  setColorField('m-body-color',    ty.bodyColor    || '#54494B');
+  setColorField('m-heading-color', ty.headingColor || '#0D0E12');
+  setColorField('m-link-color',    ty.linkColor    || '#1CB7FF');
+  setColorField('m-link-hover',    ty.linkHover    || '#00D5FF');
+
+  // Tab: Buttons
+  const bt = p.buttons || def.buttons;
+  document.getElementById('m-btn-font-size').value  = bt.fontSize   || 16;
+  document.getElementById('m-btn-font-weight').value= bt.fontWeight || '600';
+  document.getElementById('m-btn-pad-v').value      = bt.padV       || 14;
+  document.getElementById('m-btn-pad-h').value      = bt.padH       || 32;
+  document.getElementById('m-radius').value         = bt.radius     || 8;
+  setColorField('m-btn-text',       bt.textColor  || '#FFFFFF');
+  setColorField('m-btn-bg',         bt.bgColor    || '#1CB7FF');
+  setColorField('m-btn-hover-text', bt.hoverText  || '#FFFFFF');
+  setColorField('m-btn-hover-bg',   bt.hoverBg    || '#00D5FF');
+
+  // Tab: Images
+  const img = p.images || def.images;
+  document.getElementById('m-img-radius').value  = img.radius  || 8;
+  document.getElementById('m-img-opacity').value = img.opacity || 1;
+
+  document.getElementById('modal-overlay').classList.add('open');
 }
 
 function setColorField(id, hex) {
-  document.getElementById(id).value = hex;
-  document.getElementById(id + '-hex').value = hex;
+  const el = document.getElementById(id);
+  const hexEl = document.getElementById(id + '-hex');
+  if (el) el.value = hex;
+  if (hexEl) hexEl.value = hex;
 }
 
 function closeModal() {
@@ -812,19 +1086,47 @@ function saveProject() {
     id:        modalMode === 'edit' ? getActiveId() : 'proj_' + Date.now(),
     name,
     desc:      document.getElementById('m-desc').value.trim(),
-    font:      document.getElementById('m-font').value.trim() || 'DM Sans',
-    radius:    parseInt(document.getElementById('m-radius').value) || 8,
     padTop:    parseInt(document.getElementById('m-pad-top').value) || 80,
     padBottom: parseInt(document.getElementById('m-pad-bot').value) || 80,
     colors: {
       primary:      document.getElementById('m-primary-hex').value,
-      primaryHover: document.getElementById('m-primary-h-hex').value,
-      primaryLight: document.getElementById('m-primary-light-hex').value,
-      accent:       document.getElementById('m-accent-hex').value,
       dark:         document.getElementById('m-dark-hex').value,
-      textDark:     document.getElementById('m-text-dark-hex').value,
       textMid:      document.getElementById('m-text-mid-hex').value,
+      accent:       document.getElementById('m-accent-hex').value,
+      primaryHover: document.getElementById('m-primary-h-hex').value,
+      textDark:     document.getElementById('m-text-dark-hex').value,
       lightBg:      document.getElementById('m-light-bg-hex').value,
+      primaryLight: document.getElementById('m-primary-light-hex').value,
+    },
+    typography: {
+      font:         document.getElementById('m-font').value.trim() || 'DM Sans',
+      bodyColor:    document.getElementById('m-body-color-hex').value,
+      bodySize:     parseInt(document.getElementById('m-body-size').value) || 16,
+      bodyWeight:   document.getElementById('m-body-weight').value,
+      bodyLineH:    parseFloat(document.getElementById('m-body-lh').value) || 1.7,
+      headingColor: document.getElementById('m-heading-color-hex').value,
+      headingWeight:document.getElementById('m-heading-weight').value,
+      h1Size:       parseInt(document.getElementById('m-h1-size').value) || 56,
+      h2Size:       parseInt(document.getElementById('m-h2-size').value) || 42,
+      h3Size:       parseInt(document.getElementById('m-h3-size').value) || 28,
+      h4Size:       parseInt(document.getElementById('m-h4-size').value) || 22,
+      linkColor:    document.getElementById('m-link-color-hex').value,
+      linkHover:    document.getElementById('m-link-hover-hex').value,
+    },
+    buttons: {
+      textColor:  document.getElementById('m-btn-text-hex').value,
+      bgColor:    document.getElementById('m-btn-bg-hex').value,
+      hoverText:  document.getElementById('m-btn-hover-text-hex').value,
+      hoverBg:    document.getElementById('m-btn-hover-bg-hex').value,
+      radius:     parseInt(document.getElementById('m-radius').value) || 8,
+      fontSize:   parseInt(document.getElementById('m-btn-font-size').value) || 16,
+      fontWeight: document.getElementById('m-btn-font-weight').value,
+      padV:       parseInt(document.getElementById('m-btn-pad-v').value) || 14,
+      padH:       parseInt(document.getElementById('m-btn-pad-h').value) || 32,
+    },
+    images: {
+      radius:  parseInt(document.getElementById('m-img-radius').value) || 8,
+      opacity: parseFloat(document.getElementById('m-img-opacity').value) || 1,
     },
   };
 
@@ -869,196 +1171,646 @@ function syncHex(hexId, colorId) {
    SYSTEM PROMPT BUILDER
 ══════════════════════════════════════════ */
 function buildSystemPrompt(project) {
-  const c = project.colors;
-  return `
-You are an expert Elementor Pro developer and UI designer for ${project.name}${project.desc ? ' — ' + project.desc : ''}. Your sole output is valid Elementor Pro JSON — nothing else.
+  const c = project.colors || {};
+  const ty = project.typography || {};
+  const bt = project.buttons || {};
+  const img = project.images || {};
+  // Support both old flat schema and new nested schema
+  const font  = ty.font    || project.font   || 'DM Sans';
+  const r     = bt.radius  !== undefined ? bt.radius  : (img.radius !== undefined ? img.radius : (project.radius || 8));
+  const pt    = project.padTop    || 80;
+  const pb    = project.padBottom || 80;
+  // Typography details
+  const bodySize     = ty.bodySize     || 16;
+  const bodyWeight   = ty.bodyWeight   || '400';
+  const bodyLineH    = ty.bodyLineH    || 1.7;
+  const bodyColor    = ty.bodyColor    || c.textMid    || '#54494B';
+  const headingColor = ty.headingColor || c.textDark   || '#0D0E12';
+  const headingWeight= ty.headingWeight|| '700';
+  const h1Size       = ty.h1Size       || 56;
+  const h2Size       = ty.h2Size       || 42;
+  const h3Size       = ty.h3Size       || 28;
+  const h4Size       = ty.h4Size       || 22;
+  const linkColor    = ty.linkColor    || c.primary    || '#1CB7FF';
+  const linkHover    = ty.linkHover    || c.primaryHover || '#00D5FF';
+  // Button details
+  const btnText      = bt.textColor   || '#FFFFFF';
+  const btnBg        = bt.bgColor     || c.primary    || '#1CB7FF';
+  const btnHoverText = bt.hoverText   || '#FFFFFF';
+  const btnHoverBg   = bt.hoverBg     || c.primaryHover || '#00D5FF';
+  const btnFontSize  = bt.fontSize    || 16;
+  const btnFontWeight= bt.fontWeight  || '600';
+  const btnPadV      = bt.padV        || 14;
+  const btnPadH      = bt.padH        || 32;
+  // Image details
+  const imgRadius    = img.radius     !== undefined ? img.radius : r;
+  const imgOpacity   = img.opacity    !== undefined ? img.opacity : 1;
 
-## CRITICAL OUTPUT RULES
-- Output ONLY raw JSON. No markdown fences, no explanation, no comments outside JSON.
-- The root object must be an array: [ { "id": "...", "elType": "section", ... } ]
-- For "full page" requests, wrap multiple sections in the array.
-- For "section" requests, return a single-element array with one section.
-- Every "id" must be a unique 7-character lowercase alphanumeric string (e.g. "a3f9b12").
-- Never reuse IDs within the same output.
+  const lines = [
+    `You are an expert Elementor Pro developer for ${project.name}${project.desc ? ' — ' + project.desc : ''}.`,
+    `Your ONLY output is a raw JSON array of Elementor container objects — nothing else.`,
+    ``,
+    `## CRITICAL: THIS INSTALL USES FLEXBOX CONTAINERS`,
+    `This site uses Elementor's modern Flexbox Container model (elType: "container").`,
+    `NEVER use elType "section" or elType "column" — those are the old model and will break on import.`,
+    `The hierarchy is: container → container (inner) → widgets`,
+    `Containers replace both sections AND columns.`,
+    ``,
+    `## OUTPUT FORMAT`,
+    `- Output starts with [ and ends with ]`,
+    `- No markdown fences, no explanations, nothing outside the JSON array`,
+    `- Every "id": unique 7-char lowercase alphanumeric string (e.g. "a3f9b2c"). Never reuse IDs.`,
+    `- Every element must have "elements": [] (even widgets with no children)`,
+    `- Every element must have "isInner": false (outer containers) or "isInner": true (inner containers)`,
+    ``,
+    `════════════════════════════════`,
+    `OUTER CONTAINER (replaces old "section")`,
+    `════════════════════════════════`,
+    `This is the top-level row. Use flex_direction "row" for side-by-side columns, "column" for stacked.`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "container",`,
+    `  "isInner": false,`,
+    `  "settings": {`,
+    `    "flex_direction": "row",`,
+    `    "content_width": "boxed",`,
+    `    "padding": { "unit": "px", "top": "${pt}", "right": "0", "bottom": "${pb}", "left": "0", "isLinked": false },`,
+    `    "padding_mobile": { "unit": "px", "top": "60", "right": "20", "bottom": "60", "left": "20", "isLinked": false },`,
+    `    "background_background": "classic",`,
+    `    "background_color": "#FFFFFF",`,
+    `    "css_classes": ""`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    ``,
+    `flex_direction options:`,
+    `  "row"    = children sit side by side (use for 2-col, 3-col layouts)`,
+    `  "column" = children stack vertically (use for single-col, centered content)`,
+    ``,
+    `content_width options:`,
+    `  "boxed" = constrained to max-width (use for most sections)`,
+    `  "full"  = edge to edge (use for full-bleed hero/CTA sections)`,
+    ``,
+    `════════════════════════════════`,
+    `INNER CONTAINER (replaces old "column")`,
+    `════════════════════════════════`,
+    `Inner containers live inside an outer container and hold the actual widgets.`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "container",`,
+    `  "isInner": true,`,
+    `  "settings": {`,
+    `    "flex_direction": "column",`,
+    `    "content_width": "full",`,
+    `    "width": { "unit": "%", "size": 50, "sizes": [] },`,
+    `    "padding": { "unit": "px", "top": "0", "right": "30", "bottom": "0", "left": "30", "isLinked": false },`,
+    `    "background_background": "classic",`,
+    `    "background_color": "",`,
+    `    "vertical_alignment": "top",`,
+    `    "flex_align_items": "flex-start"`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    ``,
+    `Width guide for inner containers:`,
+    `  2 equal cols: each width 50%`,
+    `  3 equal cols: each width 33.33%`,
+    `  2 cols 60/40: widths 60% and 40%`,
+    `  1 full col:   width 100%`,
+    ``,
+    `flex_align_items for inner containers:`,
+    `  "flex-start" = align content to top-left`,
+    `  "center"     = center content`,
+    `  "stretch"    = stretch to fill`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: heading`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "heading",`,
+    `  "settings": {`,
+    `    "title": "Your Heading Text",`,
+    `    "header_size": "h2",`,
+    `    "align": "left",`,
+    `    "title_color": "${headingColor}",`,
+    `    "typography_typography": "custom",`,
+    `    "typography_font_family": "${font}",`,
+    `    "typography_font_size": { "unit": "px", "size": 42, "sizes": [] },`,
+    `    "typography_font_size_tablet": { "unit": "px", "size": 34, "sizes": [] },`,
+    `    "typography_font_weight": "${headingWeight}",`,
+    `    "typography_font_weight": "700",`,
+    `    "typography_line_height": { "unit": "em", "size": 1.15, "sizes": [] },`,
+    `    "typography_letter_spacing": { "unit": "px", "size": -0.5 }`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    `header_size: "h1" hero, "h2" section titles, "h3" card titles, "h4" FAQ questions`,
+    `align: "left" "center" "right"`,
+    `For white text (dark bg): "title_color": "#FFFFFF"`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: text-editor  (body copy, eyebrows, paragraphs)`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "text-editor",`,
+    `  "settings": {`,
+    `    "editor": "<p>Your paragraph text here. Write real copy, never Lorem Ipsum.</p>",`,
+    `    "align": "left",`,
+    `    "text_color": "${bodyColor}",`,
+    `    "typography_typography": "custom",`,
+    `    "typography_font_size": { "unit": "px", "size": ${bodySize}, "sizes": [] },`,
+    `    "typography_font_weight": "${bodyWeight}",`,
+    `    "typography_line_height": { "unit": "em", "size": ${bodyLineH}, "sizes": [] }`,
+    `    "typography_line_height": { "unit": "em", "size": 1.7, "sizes": [] }`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    `"editor" is an HTML string. Use <p>, <strong>, <em>, <ul><li>, <br> as needed.`,
+    `For eyebrow labels use inline style: "<p style=\\"text-transform:uppercase;letter-spacing:2px;font-size:13px;font-weight:600;color:${c.primary}\\">Label</p>"`,
+    `For white text on dark bg: "text_color": "#FFFFFF"`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: button`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "button",`,
+    `  "settings": {`,
+    `    "button_type": "info",`,
+    `    "text": "Get Started Free",`,
+    `    "link": { "url": "#", "is_external": false, "nofollow": false },`,
+    `    "align": "left",`,
+    `    "size": "sm",`,
+    `    "icon": { "value": "", "library": "" },`,
+    `    "icon_align": "right",`,
+    `    "typography_typography": "custom",`,
+    `    "typography_font_size": { "unit": "px", "size": ${btnFontSize}, "sizes": [] },`,
+    `    "typography_font_weight": "${btnFontWeight}",`,
+    `    "typography_font_weight": "600",`,
+    `    "text_padding": { "unit": "px", "top": "14", "right": "32", "bottom": "14", "left": "32", "isLinked": false },`,
+    `    "background_color": "${btnBg}",`,
+    `    "button_text_color": "${btnText}",`,
+    `    "border_border": "none",`,
+    `    "border_radius": { "unit": "px", "top": "${r}", "right": "${r}", "bottom": "${r}", "left": "${r}", "isLinked": true },`,
+    `    "button_background_hover_color": "${c.primaryHover}",`,
+    `    "button_background_hover_color": "${btnHoverBg}",`,
+    `    "button_hover_color": "${btnHoverText}"`,
+    `  "elements": []`,
+    `}`,
+    `For SECONDARY/outline button:`,
+    `  "background_color": "rgba(0,0,0,0)", "button_text_color": "${c.primary}",`,
+    `  "border_border": "solid", "border_width": {"unit":"px","top":"2","right":"2","bottom":"2","left":"2","isLinked":true},`,
+    `  "border_color": "${c.primary}", "button_background_hover_color": "${c.primaryLight}", "button_hover_color": "${c.primary}"`,
+    `For GHOST on dark bg (white):`,
+    `  "background_color": "rgba(255,255,255,0.12)", "button_text_color": "#FFFFFF",`,
+    `  "border_border": "solid", "border_color": "rgba(255,255,255,0.4)",`,
+    `  "button_background_hover_color": "rgba(255,255,255,0.22)", "button_hover_color": "#FFFFFF"`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: icon-box`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "icon-box",`,
+    `  "settings": {`,
+    `    "selected_icon": { "value": "fas fa-check-circle", "library": "fa-solid" },`,
+    `    "view": "default",`,
+    `    "shape": "circle",`,
+    `    "position": "top",`,
+    `    "title_size": "h3",`,
+    `    "title_text": "Feature Title",`,
+    `    "description_text": "One clear sentence describing this feature or benefit.",`,
+    `    "link": { "url": "", "is_external": false, "nofollow": false },`,
+    `    "title_color": "${c.textDark}",`,
+    `    "description_color": "${c.textMid}",`,
+    `    "primary_color": "${c.primary}",`,
+    `    "secondary_color": "#FFFFFF",`,
+    `    "icon_size": { "unit": "px", "size": 44, "sizes": [] },`,
+    `    "icon_space": { "unit": "px", "size": 16, "sizes": [] },`,
+    `    "title_bottom_space": { "unit": "px", "size": 10, "sizes": [] },`,
+    `    "typography_typography": "custom",`,
+    `    "typography_font_family": "${font}",`,
+    `    "typography_font_size": { "unit": "px", "size": 20, "sizes": [] },`,
+    `    "typography_font_weight": "600",`,
+    `    "typography_line_height": { "unit": "em", "size": 1.2, "sizes": [] },`,
+    `    "description_typography_typography": "custom",`,
+    `    "description_typography_font_family": "${font}",`,
+    `    "description_typography_font_size": { "unit": "px", "size": 15, "sizes": [] },`,
+    `    "description_typography_font_weight": "400",`,
+    `    "description_typography_line_height": { "unit": "em", "size": 1.65, "sizes": [] },`,
+    `    "_padding": { "unit": "px", "top": "28", "right": "28", "bottom": "28", "left": "28", "isLinked": true },`,
+    `    "_background_background": "classic",`,
+    `    "_background_color": "#FFFFFF",`,
+    `    "_border_border": "solid",`,
+    `    "_border_width": { "unit": "px", "top": "1", "right": "1", "bottom": "1", "left": "1", "isLinked": true },`,
+    `    "_border_color": "rgba(0,0,0,0.07)",`,
+    `    "_border_radius": { "unit": "px", "top": "${r}", "right": "${r}", "bottom": "${r}", "left": "${r}", "isLinked": true }`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    `IMPORTANT: Widget-level background/border use "_background_background", "_border_border" (with underscore prefix).`,
+    `This is different from container-level which uses "background_background", "border_border" (no underscore).`,
+    `"view" options: "default" (bare icon), "stacked" (filled circle), "framed" (circle border)`,
+    `"position" options: "top", "left", "right"`,
+    `Common FA icons: fas fa-check-circle, fas fa-bolt, fas fa-chart-line, fas fa-users, fas fa-shield-alt,`,
+    `  fas fa-clock, fas fa-star, fas fa-building, fas fa-hard-hat, fas fa-truck, fas fa-user-md,`,
+    `  fas fa-file-alt, fas fa-dollar-sign, fas fa-phone, fas fa-exclamation-triangle, fas fa-times-circle,`,
+    `  fas fa-frown, fas fa-cog, fas fa-rocket, fas fa-map-marker-alt`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: icon-list (checklist)`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "icon-list",`,
+    `  "settings": {`,
+    `    "icon_list": [`,
+    `      { "_id": "XXXXXXX", "text": "First item", "selected_icon": { "value": "fas fa-check", "library": "fa-solid" } },`,
+    `      { "_id": "XXXXXXX", "text": "Second item", "selected_icon": { "value": "fas fa-check", "library": "fa-solid" } },`,
+    `      { "_id": "XXXXXXX", "text": "Third item", "selected_icon": { "value": "fas fa-check", "library": "fa-solid" } }`,
+    `    ],`,
+    `    "layout": "traditional",`,
+    `    "space_between": { "unit": "px", "size": 12, "sizes": [] },`,
+    `    "icon_size": { "unit": "px", "size": 16, "sizes": [] },`,
+    `    "icon_color": "${c.accent}",`,
+    `    "text_color": "${c.textMid}",`,
+    `    "text_indent": { "unit": "px", "size": 8, "sizes": [] },`,
+    `    "typography_typography": "custom",`,
+    `    "typography_font_family": "${font}",`,
+    `    "typography_font_size": { "unit": "px", "size": 15, "sizes": [] },`,
+    `    "typography_font_weight": "400",`,
+    `    "typography_line_height": { "unit": "em", "size": 1.6 }`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: image`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "image",`,
+    `  "settings": {`,
+    `    "image": { "url": "https://placehold.co/800x600/EEF2FF/6366f1?text=Image", "id": "", "alt": "" },`,
+    `    "image_size": "full",`,
+    `    "align": "center",`,
+    `    "caption_source": "none",`,
+    `    "_border_radius": { "unit": "px", "top": "${r}", "right": "${r}", "bottom": "${r}", "left": "${r}", "isLinked": true }`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: image-box`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "image-box",`,
+    `  "settings": {`,
+    `    "image": { "url": "https://placehold.co/400x300/EEF2FF/6366f1?text=Image", "id": "" },`,
+    `    "image_size": "full",`,
+    `    "title_text": "Card Title",`,
+    `    "description_text": "A short description of this card item.",`,
+    `    "link": { "url": "", "is_external": false, "nofollow": false },`,
+    `    "position": "top",`,
+    `    "title_size": "h3",`,
+    `    "title_color": "${c.textDark}",`,
+    `    "description_color": "${c.textMid}",`,
+    `    "typography_typography": "custom",`,
+    `    "typography_font_family": "${font}",`,
+    `    "typography_font_size": { "unit": "px", "size": 20, "sizes": [] },`,
+    `    "typography_font_weight": "600",`,
+    `    "description_typography_typography": "custom",`,
+    `    "description_typography_font_family": "${font}",`,
+    `    "description_typography_font_size": { "unit": "px", "size": 15, "sizes": [] },`,
+    `    "_padding": { "unit": "px", "top": "28", "right": "28", "bottom": "28", "left": "28", "isLinked": true },`,
+    `    "_background_background": "classic",`,
+    `    "_background_color": "#FFFFFF",`,
+    `    "_border_border": "solid",`,
+    `    "_border_width": { "unit": "px", "top": "1", "right": "1", "bottom": "1", "left": "1", "isLinked": true },`,
+    `    "_border_color": "rgba(0,0,0,0.07)",`,
+    `    "_border_radius": { "unit": "px", "top": "${r}", "right": "${r}", "bottom": "${r}", "left": "${r}", "isLinked": true }`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: testimonial`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "testimonial",`,
+    `  "settings": {`,
+    `    "testimonial_content": "Specific authentic quote from a real-sounding customer.",`,
+    `    "testimonial_image": { "url": "https://placehold.co/80x80/EEF2FF/6366f1?text=Photo", "id": "" },`,
+    `    "testimonial_name": "Jane Smith",`,
+    `    "testimonial_job": "Owner, Acme Agency",`,
+    `    "testimonial_image_size": "thumbnail",`,
+    `    "alignment": "left",`,
+    `    "testimonial_text_color": "${c.textMid}",`,
+    `    "testimonial_name_color": "${c.textDark}",`,
+    `    "testimonial_job_color": "#98AFB6",`,
+    `    "typography_typography": "custom",`,
+    `    "typography_font_family": "${font}",`,
+    `    "typography_font_size": { "unit": "px", "size": 16, "sizes": [] },`,
+    `    "typography_font_style": "italic",`,
+    `    "typography_font_weight": "400",`,
+    `    "typography_line_height": { "unit": "em", "size": 1.7 },`,
+    `    "name_typography_typography": "custom",`,
+    `    "name_typography_font_family": "${font}",`,
+    `    "name_typography_font_size": { "unit": "px", "size": 15 },`,
+    `    "name_typography_font_weight": "700",`,
+    `    "job_typography_typography": "custom",`,
+    `    "job_typography_font_family": "${font}",`,
+    `    "job_typography_font_size": { "unit": "px", "size": 13 },`,
+    `    "_padding": { "unit": "px", "top": "28", "right": "28", "bottom": "28", "left": "28", "isLinked": true },`,
+    `    "_background_background": "classic",`,
+    `    "_background_color": "#FFFFFF",`,
+    `    "_border_border": "solid",`,
+    `    "_border_width": { "unit": "px", "top": "1", "right": "1", "bottom": "1", "left": "1", "isLinked": true },`,
+    `    "_border_color": "rgba(0,0,0,0.07)",`,
+    `    "_border_radius": { "unit": "px", "top": "${r}", "right": "${r}", "bottom": "${r}", "left": "${r}", "isLinked": true }`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    `For testimonials on dark bg: "testimonial_text_color":"#FFFFFF", "testimonial_name_color":"#FFFFFF",`,
+    `"testimonial_job_color":"rgba(255,255,255,0.6)", "_background_color":"rgba(255,255,255,0.07)", "_border_color":"rgba(255,255,255,0.12)"`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: counter (animated stat)`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "counter",`,
+    `  "settings": {`,
+    `    "starting_number": 0,`,
+    `    "ending_number": 500,`,
+    `    "prefix": "",`,
+    `    "suffix": "+",`,
+    `    "duration": 2000,`,
+    `    "thousand_separator": "yes",`,
+    `    "title": "Happy Clients",`,
+    `    "number_color": "${c.primary}",`,
+    `    "title_color": "${c.textMid}",`,
+    `    "typography_typography": "custom",`,
+    `    "typography_font_family": "${font}",`,
+    `    "typography_font_size": { "unit": "px", "size": 52, "sizes": [] },`,
+    `    "typography_font_weight": "700",`,
+    `    "title_typography_typography": "custom",`,
+    `    "title_typography_font_family": "${font}",`,
+    `    "title_typography_font_size": { "unit": "px", "size": 15, "sizes": [] },`,
+    `    "title_typography_font_weight": "500"`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    `On dark bg: "number_color":"#FFFFFF", "title_color":"rgba(255,255,255,0.7)"`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: icon (standalone icon)`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "icon",`,
+    `  "settings": {`,
+    `    "selected_icon": { "value": "fas fa-check", "library": "fa-solid" },`,
+    `    "align": "left",`,
+    `    "primary_color": "${c.primary}",`,
+    `    "size": { "unit": "px", "size": 24, "sizes": [] },`,
+    `    "_padding": { "unit": "px", "top": "12", "right": "12", "bottom": "12", "left": "12", "isLinked": true },`,
+    `    "_background_background": "classic",`,
+    `    "_background_color": "${c.primaryLight}",`,
+    `    "_border_radius": { "unit": "px", "top": "100", "right": "100", "bottom": "100", "left": "100", "isLinked": true }`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: spacer`,
+    `════════════════════════════════`,
+    `{ "id":"XXXXXXX","elType":"widget","isInner":false,"widgetType":"spacer","settings":{"space":{"unit":"px","size":32,"sizes":[]}},"elements":[] }`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: divider`,
+    `════════════════════════════════`,
+    `{ "id":"XXXXXXX","elType":"widget","isInner":false,"widgetType":"divider","settings":{"style":"solid","width":{"unit":"%","size":100},"align":"center","weight":{"unit":"px","size":1,"sizes":[]},"color":"rgba(0,0,0,0.08)","gap":{"unit":"px","size":20,"sizes":[]}},"elements":[] }`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: alert`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "alert",`,
+    `  "settings": {`,
+    `    "alert_type": "info",`,
+    `    "alert_title": "Alert Title",`,
+    `    "alert_description": "Alert body text here.",`,
+    `    "background_color": "${c.primaryLight}",`,
+    `    "border_color": "${c.primary}",`,
+    `    "title_color": "${c.textDark}",`,
+    `    "description_color": "${c.textMid}"`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    `alert_type options: "info", "success", "warning", "danger"`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: progress (progress bar)`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "progress",`,
+    `  "settings": {`,
+    `    "title": "Skill Name",`,
+    `    "percent": { "unit": "%", "size": 75, "sizes": [] },`,
+    `    "inner_text": "75%",`,
+    `    "bar_color": "${c.primary}",`,
+    `    "bar_bg_color": "rgba(0,0,0,0.08)",`,
+    `    "typography_typography": "custom",`,
+    `    "typography_font_family": "${font}",`,
+    `    "typography_font_size": { "unit": "px", "size": 14 },`,
+    `    "typography_font_weight": "600"`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: nested-accordion (FAQ accordion)`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "nested-accordion",`,
+    `  "settings": {`,
+    `    "items": [`,
+    `      { "_id": "XXXXXXX", "item_title": "Question 1?" },`,
+    `      { "_id": "XXXXXXX", "item_title": "Question 2?" },`,
+    `      { "_id": "XXXXXXX", "item_title": "Question 3?" }`,
+    `    ],`,
+    `    "title_typography_typography": "custom",`,
+    `    "title_typography_font_family": "${font}",`,
+    `    "title_typography_font_size": { "unit": "px", "size": 17 },`,
+    `    "title_typography_font_weight": "600",`,
+    `    "title_color": "${c.textDark}",`,
+    `    "border_color": "rgba(0,0,0,0.08)"`,
+    `  },`,
+    `  "elements": [`,
+    `    {`,
+    `      "id": "XXXXXXX",`,
+    `      "elType": "container",`,
+    `      "isInner": true,`,
+    `      "isLocked": true,`,
+    `      "settings": { "_title": "item #1", "content_width": "full" },`,
+    `      "elements": []`,
+    `    }`,
+    `  ]`,
+    `}`,
+    `Each item in "items" array needs a matching container child in "elements" with "_title" matching "item #N".`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: rating (star rating)`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "rating",`,
+    `  "settings": {`,
+    `    "rating_scale": "5",`,
+    `    "rating": { "unit": "$", "size": 5 },`,
+    `    "star_style": "outlined",`,
+    `    "unmarked_style": "solid",`,
+    `    "color": "${c.primary}",`,
+    `    "unmarked_color": "rgba(0,0,0,0.1)",`,
+    `    "icon_size": { "unit": "px", "size": 18, "sizes": [] }`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    ``,
+    `════════════════════════════════`,
+    `WIDGET: video`,
+    `════════════════════════════════`,
+    `{`,
+    `  "id": "XXXXXXX",`,
+    `  "elType": "widget",`,
+    `  "isInner": false,`,
+    `  "widgetType": "video",`,
+    `  "settings": {`,
+    `    "video_type": "youtube",`,
+    `    "youtube_url": "https://www.youtube.com/watch?v=XXXXXXXXXXX",`,
+    `    "show_image_overlay": "yes",`,
+    `    "image_overlay": { "url": "https://placehold.co/800x450/EEF2FF/6366f1?text=Video", "id": "" },`,
+    `    "show_play_icon": "yes",`,
+    `    "_border_radius": { "unit": "px", "top": "${r}", "right": "${r}", "bottom": "${r}", "left": "${r}", "isLinked": true }`,
+    `  },`,
+    `  "elements": []`,
+    `}`,
+    ``,
+    `════════════════════════════════`,
+    `BRAND: ${project.name}`,
+    `════════════════════════════════`,
+    `Primary:       ${c.primary}`,
+    `Primary Hover: ${c.primaryHover}`,
+    `Primary Light: ${c.primaryLight}`,
+    `Accent/Green:  ${c.accent}`,
+    `Dark/Navy:     ${c.dark}`,
+    `Text Dark:     ${c.textDark}   — headings, titles`,
+    `Text Mid:      ${c.textMid}    — body copy, descriptions`,
+    `Light BG:      ${c.lightBg}    — alternating section backgrounds`,
+    `White:         #FFFFFF`,
+    `Font:          ${font}   — use on ALL typography_font_family keys`,
+    `Border radius: ${r}px buttons / ${imgRadius}px images`,
+    `Section pad:   ${pt}px top / ${pb}px bottom`,
+    `Body:          ${bodySize}px / weight ${bodyWeight} / lh ${bodyLineH} / color ${bodyColor}`,
+    `════════════════════════════════`,
+    `CRITICAL RULES`,
+    `════════════════════════════════`,
+    `1. CONTAINER MODEL ONLY — never use elType "section" or "column"`,
+    `2. Widget-level background/border: underscore-prefixed keys (_background_background, _border_border, _border_radius, _padding)`,
+    `3. Container-level background/border: no underscore (background_background, border_border, padding)`,
+    `4. ALWAYS set typography_typography: "custom" when setting any font properties`,
+    `5. ALWAYS include typography_font_family on every text widget`,
+    `6. On dark/colored section backgrounds: override ALL text colors to "#FFFFFF"`,
+    `7. Flat design: never add box shadows`,
+    `8. NEVER invent property names — only use exact keys shown in skeletons above`,
+    `9. Every element needs "isInner": false (outer) or "isInner": true (inner containers)`,
+    ``,
+    `════════════════════════════════`,
+    `LAYOUT PATTERNS`,
+    `════════════════════════════════`,
+    ``,
+    `HERO: 1 outer container (flex_direction:"row", bg white, pad 100px).`,
+    `  → inner container 60% (flex_direction:"column"): eyebrow text-editor + h1 heading + text-editor body + button(s)`,
+    `  → inner container 40% (flex_direction:"column"): image widget`,
+    ``,
+    `PAIN/PROBLEM: 2 outer containers.`,
+    `  1st: flex_direction:"column", bg white — inner 100%: eyebrow + h2 (color:${c.dark}) + body, all centered`,
+    `  2nd: flex_direction:"row", bg white — 3 inner containers 33% each, each with icon-box (warning icons)`,
+    ``,
+    `FEATURES: 2 outer containers.`,
+    `  1st: flex_direction:"column", bg ${c.lightBg} — inner 100%: eyebrow + h2 centered`,
+    `  2nd: flex_direction:"row", bg ${c.lightBg} — 3 inner containers 33% each, each with icon-box`,
+    ``,
+    `STATS: 1 outer container (flex_direction:"row", bg ${c.dark}).`,
+    `  → 4 inner containers 25% each, each with counter widget. White text overrides.`,
+    ``,
+    `TESTIMONIALS: 2 outer containers.`,
+    `  1st: flex_direction:"column", bg ${c.dark} — inner 100%: eyebrow + h2 (white text) centered`,
+    `  2nd: flex_direction:"row", bg ${c.dark} — 3 inner containers 33% each, each with testimonial widget (dark bg overrides)`,
+    ``,
+    `CTA BANNER: 1 outer container (flex_direction:"column", bg ${c.primary} or ${c.dark}).`,
+    `  → 1 inner container 100%, flex_align_items:"center": eyebrow + h2 (white) + body (white) + ghost button`,
+    ``,
+    `PRICING: 1 outer container (flex_direction:"row", bg white).`,
+    `  → 3 inner containers 33% each. Each: h3 plan name + text-editor price + icon-list features + button`,
+    `  → Middle inner container: _background_color: "${c.primary}", all text white`,
+    ``,
+    `FAQ: 1 outer container (flex_direction:"row", bg ${c.lightBg}).`,
+    `  → inner 40%: h2 + intro text-editor`,
+    `  → inner 60%: nested-accordion widget`,
+    ``,
+    `════════════════════════════════`,
+    `CONTENT RULES`,
+    `════════════════════════════════`,
+    `- Write REAL specific copy for ${project.name}'s audience — NEVER Lorem Ipsum`,
+    `- Headlines: benefit-driven, direct, no fluff`,
+    `- Button text: action verbs ("Get Started Free", "Book a Demo", "See How It Works")`,
+    `- Pain sections: emotionally resonant, specific language`,
+    `- Testimonials: realistic full names, job titles, company names`,
+    ``,
+    `## FINAL RULE`,
+    `Output starts with [ and ends with ]. Nothing before or after. No markdown.`,
+  ];
 
-## ELEMENTOR PRO JSON STRUCTURE
-
-### Top-level section skeleton:
-{
-  "id": "<7-char-id>",
-  "elType": "section",
-  "settings": {
-    "structure": "20",
-    "padding": { "top": "${project.padTop}", "bottom": "${project.padBottom}", "left": "0", "right": "0", "unit": "px", "isLinked": false },
-    "background_color": "",
-    "custom_css": ""
-  },
-  "elements": []
+  return lines.join('\n');
 }
 
-### Column skeleton:
-{
-  "id": "<7-char-id>",
-  "elType": "column",
-  "settings": { "_column_size": 50, "padding": { "unit": "px", "top": "0", "right": "20", "bottom": "0", "left": "20", "isLinked": false } },
-  "elements": []
-}
-
-### BRAND CONSTANTS — always apply these for ${project.name}:
-- Font family: "${project.font}" on ALL text widgets
-- Primary color: ${c.primary}
-- Primary hover: ${c.primaryHover}
-- Primary light BG: ${c.primaryLight}
-- Accent/green color: ${c.accent}
-- Dark/navy color: ${c.dark}
-- Heading text color: ${c.textDark}
-- Body text color: ${c.textMid}
-- Light section background: ${c.lightBg}
-- Border radius: ${project.radius}px on all buttons, cards, images
-- Box shadow on all elements: none (flat design)
-- Section padding: ${project.padTop}px top, ${project.padBottom}px bottom
-
-### Button widget (primary):
-{
-  "id": "<id>",
-  "elType": "widget",
-  "widgetType": "button",
-  "settings": {
-    "text": "Get Started",
-    "link": { "url": "#", "is_external": false, "nofollow": false },
-    "align": "left",
-    "button_type": "info",
-    "background_color": "${c.primary}",
-    "button_text_color": "#FFFFFF",
-    "border_radius": { "top": "${project.radius}", "right": "${project.radius}", "bottom": "${project.radius}", "left": "${project.radius}", "unit": "px", "isLinked": true },
-    "text_padding": { "top": "14", "right": "32", "bottom": "14", "left": "32", "unit": "px", "isLinked": false },
-    "typography_typography": "custom",
-    "typography_font_family": "${project.font}",
-    "typography_font_size": { "unit": "px", "size": 16 },
-    "typography_font_weight": "600",
-    "button_background_hover_color": "${c.primaryHover}"
-  },
-  "elements": []
-}
-
-### Heading widget:
-{
-  "id": "<id>",
-  "elType": "widget",
-  "widgetType": "heading",
-  "settings": {
-    "title": "Your Heading",
-    "header_size": "h2",
-    "align": "left",
-    "title_color": "${c.textDark}",
-    "typography_typography": "custom",
-    "typography_font_family": "${project.font}",
-    "typography_font_size": { "unit": "px", "size": 42 },
-    "typography_font_weight": "700",
-    "typography_line_height": { "unit": "em", "size": 1.15 }
-  },
-  "elements": []
-}
-
-### Text Editor widget:
-{
-  "id": "<id>",
-  "elType": "widget",
-  "widgetType": "text-editor",
-  "settings": {
-    "editor": "<p>Your paragraph text here.</p>",
-    "align": "left",
-    "text_color": "${c.textMid}",
-    "typography_typography": "custom",
-    "typography_font_family": "${project.font}",
-    "typography_font_size": { "unit": "px", "size": 16 },
-    "typography_font_weight": "400",
-    "typography_line_height": { "unit": "em", "size": 1.7 }
-  },
-  "elements": []
-}
-
-### Icon Box widget:
-{
-  "id": "<id>",
-  "elType": "widget",
-  "widgetType": "icon-box",
-  "settings": {
-    "icon": { "value": "fas fa-check-circle", "library": "fa-solid" },
-    "icon_size": { "unit": "px", "size": 40 },
-    "primary_color": "${c.primary}",
-    "title_text": "Feature Title",
-    "description_text": "Description here.",
-    "title_color": "${c.textDark}",
-    "description_color": "${c.textMid}",
-    "typography_typography": "custom",
-    "typography_font_family": "${project.font}",
-    "typography_font_size": { "unit": "px", "size": 18 },
-    "typography_font_weight": "600",
-    "description_typography_typography": "custom",
-    "description_typography_font_family": "${project.font}",
-    "description_typography_font_size": { "unit": "px", "size": 15 }
-  },
-  "elements": []
-}
-
-### Image widget:
-{
-  "id": "<id>",
-  "elType": "widget",
-  "widgetType": "image",
-  "settings": {
-    "image": { "url": "https://via.placeholder.com/600x400", "id": "" },
-    "image_size": "full",
-    "align": "center",
-    "border_radius": { "top": "${project.radius}", "right": "${project.radius}", "bottom": "${project.radius}", "left": "${project.radius}", "unit": "px", "isLinked": true }
-  },
-  "elements": []
-}
-
-### Divider widget:
-{
-  "id": "<id>", "elType": "widget", "widgetType": "divider",
-  "settings": { "style": "solid", "color": "rgba(0,0,0,0.08)", "weight": { "unit": "px", "size": 1 }, "gap": { "unit": "px", "size": 24 } },
-  "elements": []
-}
-
-### Spacer widget:
-{
-  "id": "<id>", "elType": "widget", "widgetType": "spacer",
-  "settings": { "space": { "unit": "px", "size": 24 } },
-  "elements": []
-}
-
-## COLUMN LAYOUT GUIDE
-- structure "10" = 1 column full width
-- structure "20" = 2 equal columns (50/50)
-- structure "30" = 3 equal columns (33/33/33)
-- structure "40" = 4 equal columns (25 each)
-- "_column_size" is the percentage
-
-## SECTION DESIGN PATTERNS
-- Hero: 2-col (60/40), heading+subtext+CTA left, image right, white bg
-- Pain: centered H2+paragraph, 3-col icon-boxes, use ${c.dark} for heading
-- Features: 3-col icon boxes, ${c.primaryLight} or ${c.lightBg} background
-- Testimonials: 3-col, ${c.dark} navy background, white text
-- CTA: 1-col centered, ${c.primary} or ${c.dark} background, white text + ghost button
-- Pricing: 3-col, middle card highlighted with ${c.primary} background
-- FAQ: 1-col, alternating Q+A pairs
-
-## CONTENT RULES
-- Write REAL, specific copy — never Lorem Ipsum
-- Adapt copy to the audience specified in the brief
-- Headlines should be benefit-driven and direct
-- CTA button text should be action-oriented
-
-## ID GENERATION
-Every JSON "id" = unique 7-char lowercase alphanumeric string. Never sequential.
-
-## FINAL REMINDER
-Output ONLY the JSON array. First char must be "[". Last char must be "]". Nothing before or after.
-`;
-}
 
 /* ══════════════════════════════════════════
    GENERATE
@@ -1289,27 +2041,47 @@ function countWidgets(obj) {
 
 function copyJSON() {
   if (!currentJSON) return;
-  navigator.clipboard.writeText(JSON.stringify(JSON.parse(currentJSON), null, 2))
-    .then(() => toast('Copied!', 'success'));
+  const title = document.getElementById('output-name').textContent;
+  const wrapped = wrapForElementor(currentJSON, title);
+  navigator.clipboard.writeText(JSON.stringify(wrapped, null, 2))
+    .then(() => toast('Copied (Elementor format)!', 'success'));
 }
 
 function validateJSON() {
   if (!currentJSON) return;
   try {
-    const parsed  = JSON.parse(currentJSON);
-    const sections = Array.isArray(parsed) ? parsed.filter(s => s.elType === 'section' && !s.isInner).length : 0;
-    const widgets  = countWidgets(parsed);
-    toast(`✓ Valid — ${sections} section(s), ${widgets} widget(s)`, 'success');
-  } catch (e) { toast('Invalid JSON: ' + e.message, 'error'); }
+    const sections = JSON.parse(currentJSON);
+    if (!Array.isArray(sections)) throw new Error('Root must be an array of sections');
+    const sectionCount = sections.filter(s => s.elType === 'section' && !s.isInner).length;
+    const widgets = countWidgets(sections);
+    // Also validate the wrapper
+    const wrapped = wrapForElementor(currentJSON, 'test');
+    if (wrapped.version !== '0.4') throw new Error('Wrapper malformed');
+    toast(`✓ Valid — ${sectionCount} section(s), ${widgets} widget(s), Elementor import-ready`, 'success');
+  } catch (e) { toast('Invalid: ' + e.message, 'error'); }
+}
+
+function wrapForElementor(jsonStr, title) {
+  // Exact format from real Elementor Pro export — required for import
+  const containers = JSON.parse(jsonStr);
+  return {
+    version: "0.4",
+    title: title || "ElementorDrops Template",
+    type: "page",
+    page_settings: {},
+    content: containers
+  };
 }
 
 function downloadJSON() {
   if (!currentJSON) return;
-  const pretty = JSON.stringify(JSON.parse(currentJSON), null, 2);
+  const title = document.getElementById('output-name').textContent;
+  const wrapped = wrapForElementor(currentJSON, title);
+  const pretty = JSON.stringify(wrapped, null, 2);
   const blob = new Blob([pretty], { type: 'application/json' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  const fname = document.getElementById('output-name').textContent
+  const fname = title
     .replace(/[^a-z0-9]+/gi, '-').toLowerCase().replace(/^-|-$/g, '').slice(0, 50) || 'elementor-template';
   a.href = url; a.download = `${fname}.json`; a.click();
   URL.revokeObjectURL(url);
